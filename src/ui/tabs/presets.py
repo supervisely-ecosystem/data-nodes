@@ -138,11 +138,14 @@ def preset_name_input_cb(value):
 def load_json():
     load_preset_btn.loading = True
     load_notification_select.set_value("empty")
-    filename = load_file_selector.get_value()
-    if filename is None:
-        load_notification_select.set_value("not selected")
-        return
-    path = f"/{g.TEAM_FILES_PATH}/presets/{filename}.json"
+    if g.FILE is not None:
+        path = g.FILE
+    else:
+        filename = load_file_selector.get_value()
+        if filename is None:
+            load_notification_select.set_value("not selected")
+            return
+        path = f"/{g.TEAM_FILES_PATH}/presets/{filename}.json"
     nodes_flow.clear()
     try:
         utils.create_data_dir()

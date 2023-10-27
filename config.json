@@ -9,7 +9,8 @@
         "target": [
             "images_project",
             "images_dataset",
-            "ecosystem"
+            "ecosystem",
+            "files_file"
         ]
     }
 }

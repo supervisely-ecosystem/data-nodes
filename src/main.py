@@ -57,3 +57,6 @@ if g.PROJECT_ID:
     layer.from_json({"src": src, "settings": {"classes_mapping": "default"}})
     node = layer.create_node()
     nodes_flow.add_node(node)
+
+if g.FILE:
+    g.updater("load_json")
