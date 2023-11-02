@@ -46,6 +46,7 @@ from .actions.tag.tag import TagAction
 from .actions.save.save import SaveAction
 from .actions.save_masks.save_masks import SaveMasksAction
 from .actions.supervisely.supervisely import SuperviselyAction
+from .actions.images_filter.images_filter import ImagesFilterAction
 
 
 SOURCE_ACTIONS = "Input"
@@ -97,11 +98,7 @@ actions_list = {
         SplitMasksAction.name,
         TagAction.name,
     ],
-    OTHER: [
-        DatasetAction.name,
-        DummyAction.name,
-        IfAction.name,
-    ],
+    OTHER: [DatasetAction.name, DummyAction.name, IfAction.name, ImagesFilterAction.name],
     SAVE_ACTIONS: [
         SaveAction.name,
         SaveMasksAction.name,
@@ -151,6 +148,7 @@ actions_dict = {
     DatasetAction.name: DatasetAction,
     DummyAction.name: DummyAction,
     IfAction.name: IfAction,
+    ImagesFilterAction.name: ImagesFilterAction,
     # Save layers
     SaveAction.name: SaveAction,
     SaveMasksAction.name: SaveMasksAction,
