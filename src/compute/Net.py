@@ -128,9 +128,10 @@ class Net:
         return new_name
 
     def may_require_images(self):
-        # req_layers = [layer for layer in self.layers if layer.requires_image()]
-        # return len(req_layers) > 0
-        return True
+        for layer in self.layers:
+            if layer.requires_image():
+                return True
+        return False
 
     def check_connections(self, indx=-1):
         if indx == -1:
@@ -389,6 +390,7 @@ class Net:
                             img_data = g.api.image.download_np(img_info.id)
                         img_desc = ImageDescriptor(
                             LegacyProjectItem(
+                                image_info=img_info,
                                 project_name=project_info.name,
                                 ds_name=dataset_info.name,
                                 image_name=".".join(img_info.name.split(".")[:-1]),

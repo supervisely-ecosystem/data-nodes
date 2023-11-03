@@ -67,7 +67,7 @@ class SuperviselyLayer(Layer):
             "ml-nodes": g.current_dtl_json,
         }
         g.api.project.update_custom_data(self.sly_project_info.id, custom_data)
-        self.net_change_images = self.net.may_require_images()
+        self.need_image = self.net.may_require_images()
 
     def get_or_create_dataset(self, dataset_name):
         if not g.api.dataset.exists(self.sly_project_info.id, dataset_name):
@@ -86,9 +86,15 @@ class SuperviselyLayer(Layer):
 
             if self.sly_project_info is not None:
                 dataset_info = self.get_or_create_dataset(dataset_name)
-                image_info = g.api.image.upload_np(
-                    dataset_info.id, out_item_name, img_desc.read_image()
-                )
+                if self.need_image:
+                    image_info = g.api.image.upload_np(
+                        dataset_info.id, out_item_name, img_desc.read_image()
+                    )
+                else:
+                    image_info = g.api.image.copy(
+                        dataset_info.id, img_desc.info.image_info.id, change_name_if_conflict=True
+                    )
+
                 g.api.annotation.upload_ann(image_info.id, ann)
 
         yield ([img_desc, ann],)

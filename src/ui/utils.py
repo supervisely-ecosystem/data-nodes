@@ -273,7 +273,9 @@ def load_preview_for_data_layer(layer: Layer):
         )
 
     try:
-        preview_img_path, preview_ann_path = download_preview(project_name, dataset_name)
+        preview_img_path, preview_ann_path, image_info = download_preview(
+            project_name, dataset_name
+        )
     except Exception as e:
         raise CustomException(
             f"Error downloading image and annotation for preview",
@@ -286,6 +288,7 @@ def load_preview_for_data_layer(layer: Layer):
     preview_path = f"{g.PREVIEW_DIR}/{layer.id}"
     img_desc = ImageDescriptor(
         LegacyProjectItem(
+            image_info=image_info,
             project_name=project_name,
             ds_name=dataset_name,
             image_name="preview_image",
@@ -418,7 +421,9 @@ def update_all_previews(net: Net, data_layers_ids: list, all_layers_ids: list):
             )
 
         try:
-            preview_img_path, preview_ann_path = download_preview(project_name, dataset_name)
+            preview_img_path, preview_ann_path, image_info = download_preview(
+                project_name, dataset_name
+            )
         except Exception as e:
             raise CustomException(
                 f"Error downloading image and annotation for preview",
@@ -431,6 +436,7 @@ def update_all_previews(net: Net, data_layers_ids: list, all_layers_ids: list):
         preview_path = f"{g.PREVIEW_DIR}/{data_layer.id}"
         img_desc = ImageDescriptor(
             LegacyProjectItem(
+                image_info=image_info,
                 project_name=project_name,
                 ds_name=dataset_name,
                 image_name="preview_image",

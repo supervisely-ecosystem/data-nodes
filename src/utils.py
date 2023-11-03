@@ -14,6 +14,7 @@ import src.globals as g
 LegacyProjectItem = namedtuple(
     "LegacyProjectItem",
     [
+        "image_info",
         "project_name",
         "ds_name",
         "image_name",
@@ -43,7 +44,8 @@ def download_preview(project_name, dataset_name) -> Tuple[str, str]:
     preview_project_path = f"{g.PREVIEW_DIR}/{project_name}"
     preview_dataset_path = f"{preview_project_path}/{dataset_name}"
     ensure_dir(preview_dataset_path)
-    image_id = get_random_image(dataset_info.id).id
+    image_info = get_random_image(dataset_info.id)
+    image_id = image_info.id
     preview_img_path = f"{preview_dataset_path}/preview_image.jpg"
     g.api.image.download(image_id, preview_img_path)
     ann_json = g.api.annotation.download_json(image_id)
@@ -51,7 +53,7 @@ def download_preview(project_name, dataset_name) -> Tuple[str, str]:
     with open(preview_ann_path, "w") as f:
         json.dump(ann_json, f)
 
-    return preview_img_path, preview_ann_path
+    return preview_img_path, preview_ann_path, image_info
 
 
 def _get_project_by_name_or_id(name: str = None, id: int = None):
