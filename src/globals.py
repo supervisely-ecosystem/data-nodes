@@ -27,6 +27,20 @@ SUPPORTED_MODALITIES_MAP = {"images": sly.ProjectType.IMAGES, "videos": sly.Proj
 
 api = sly.Api()
 
+# available_agents = api.agent.get_list(TEAM_ID)  # -> NamedTuple
+
+# serving_apps = api.app.get_list(TEAM_ID)
+# serving_apps2 = api.app.get_list_ecosystem_modules()
+# s_apps = [
+#     app
+#     for app in serving_apps
+#     if app.name.lower().startswith("serve")
+#     and "serve" in app.config["categories"]
+#     and "interactive segmentation" not in app.config["categories"]
+#     and "salient object segmentation" not in app.config["categories"]
+# ]
+
+
 MODALITY_TYPE = os.getenv("modal.state.modalityType", "images")
 if PROJECT_ID is not None:
     project_type = api.project.get_info_by_id(PROJECT_ID).type
