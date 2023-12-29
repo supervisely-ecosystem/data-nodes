@@ -274,9 +274,15 @@ def load_preview_for_data_layer(layer: Layer):
             f"Error getting project meta", error=e, extra={"project_name": project_name}
         )
 
+    if layer.action.name == "input_labeling_job":
+        layer_settings = layer.get_settings()
+        items_ids = layer_settings.get("entities_ids", None)
+    else:
+        items_ids = None
+
     try:
         item_info, preview_img_path, preview_ann_path = download_preview(
-            project_name, dataset_name, project_meta, g.MODALITY_TYPE
+            project_name, dataset_name, project_meta, g.MODALITY_TYPE, items_ids
         )
     except Exception as e:
         raise CustomException(

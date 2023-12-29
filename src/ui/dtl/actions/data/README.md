@@ -3,7 +3,7 @@
 The `Images Project` layer is a first and crucial component of the data transformation process you are need to configure.
 It allows you to specify the project and datasets that will participate in the transformation process. Additionally, you can select the classes that will be used in the transformation process.
 
-> ✅ Don't worry, all your original projects will remain safe in your workspace. Any changes you make using all the layers will affect the new resulting project.
+> ✅ Don't worry, all your original projects will remain safe in your workspace. Any changes you make using all the layers will affect the new resulting project, unless you select to save results with `Add to Existing Project` layer.
 
 ### How to use:
 

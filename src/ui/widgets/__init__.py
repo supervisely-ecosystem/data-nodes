@@ -13,3 +13,4 @@ from .apply_css import ApplyCss
 from .input_tag_list import InputTagList
 from .members_list import MembersList
 from .members_list_preview import MembersListPreview
+from .lj_info import LabelingJobInfoWidget

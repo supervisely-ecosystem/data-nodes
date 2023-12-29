@@ -3,7 +3,7 @@ import queue
 from dotenv import load_dotenv
 
 import supervisely as sly
-from supervisely.app.widgets import Dialog, Text, Editor, Container, Button, Flexbox, Checkbox
+from supervisely.app.widgets import Dialog, Text, Editor, Container, Button, Flexbox
 
 
 load_dotenv("local.env")

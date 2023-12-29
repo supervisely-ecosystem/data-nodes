@@ -7,7 +7,8 @@ import shutil
 from tqdm import tqdm
 
 import supervisely as sly
-from supervisely import ProjectMeta, KeyIdMap
+from supervisely import ProjectMeta, KeyIdMap, ImageInfo
+
 
 import src.globals as g
 
@@ -26,9 +27,15 @@ LegacyProjectItem = namedtuple(
 )
 
 
-def get_random_image(dataset_id: int):
-    images = g.api.image.get_list(dataset_id)
-    return random.choice(images)
+def get_random_image(dataset_id: int, images_ids: List[int] = None) -> ImageInfo:
+    if images_ids is None:
+        images = g.api.image.get_list(dataset_id)
+        image = random.choice(images)
+        return image
+    else:
+        image_id = random.choice(images_ids)
+        image = g.api.image.get_info_by_id(image_id)
+        return image
 
 
 def get_random_video_frame(dataset_id: int):
@@ -39,8 +46,10 @@ def get_random_video_frame(dataset_id: int):
     return video, frame_id
 
 
-def download_preview_image(dataset_id: int, preview_img_path: str) -> tuple:
-    image = get_random_image(dataset_id)
+def download_preview_image(
+    dataset_id: int, preview_img_path: str, images_ids: List[int] = None
+) -> tuple:
+    image = get_random_image(dataset_id, images_ids)
     g.api.image.download(image.id, preview_img_path)
     ann_json = g.api.annotation.download_json(image.id)
     return image, ann_json
@@ -70,7 +79,11 @@ def download_preview_video(
 
 
 def download_preview(
-    project_name: str, dataset_name: str, project_meta: ProjectMeta, modality_type: str = "images"
+    project_name: str,
+    dataset_name: str,
+    project_meta: ProjectMeta,
+    modality_type: str = "images",
+    items_ids: List[int] = None,
 ) -> Tuple[str, str]:
     if modality_type not in g.SUPPORTED_MODALITIES:
         raise ValueError(f"Modality type {modality_type} is not supported")
@@ -92,7 +105,7 @@ def download_preview(
     preview_img_path = f"{preview_dataset_path}/preview_image.jpg"
     preview_ann_path = f"{preview_dataset_path}/preview_ann.json"
     if modality_type == "images":
-        item_info, ann_json = download_preview_image(dataset_info.id, preview_img_path)
+        item_info, ann_json = download_preview_image(dataset_info.id, preview_img_path, items_ids)
     elif modality_type == "videos":
         item_info, ann_json = download_preview_video(
             dataset_info.id, preview_img_path, project_meta

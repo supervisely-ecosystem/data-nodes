@@ -74,6 +74,7 @@ from .actions.filter_videos_by_tags.filter_videos_by_tags import FilterVideosByT
 # ---
 
 # Labeling job
+from .actions.input_labeling_job.input_labeling_job import InputLabelingJobAction
 from .actions.labeling_job.labeling_job import LabelingJobAction
 
 import src.globals as g
@@ -93,7 +94,7 @@ VIDEO_TRANSFORMS = "Video transforms"
 # ---
 
 image_actions_list = {
-    SOURCE_ACTIONS: [DataAction.name],
+    SOURCE_ACTIONS: [DataAction.name, InputLabelingJobAction.name],
     PIXEL_LEVEL_TRANSFORMS: [
         AnonymizeAction.name,
         BlurAction.name,
@@ -154,6 +155,7 @@ image_actions_list = {
 image_actions_dict = {
     # Data layers
     DataAction.name: DataAction,
+    InputLabelingJobAction.name: InputLabelingJobAction,
     # Pixel-level transforms layers
     AnonymizeAction.name: AnonymizeAction,
     BlurAction.name: BlurAction,
