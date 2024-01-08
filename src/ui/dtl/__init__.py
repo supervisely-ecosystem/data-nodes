@@ -52,11 +52,13 @@ from .actions.save.save import SaveAction
 from .actions.save_masks.save_masks import SaveMasksAction
 from .actions.supervisely.supervisely import SuperviselyAction
 from .actions.existing_project.existing_project import ExistingProjectAction
-from .actions.apply_nn.apply_nn import ApplyNNAction
 from .actions.filter_images_without_objects.filter_images_without_objects import (
     FilterImageWithoutObjects,
 )
 
+# Neural networks
+from .actions.deploy_yolov8.deploy_yolov8 import DeployYOLOV8Action
+from .actions.apply_nn.apply_nn import ApplyNNAction
 
 # Video
 from .actions.video_data.video_data import VideoDataAction
@@ -139,7 +141,7 @@ image_actions_list = {
         FilterImageWithoutObjects.name,
         IfAction.name,
     ],
-    NEURAL_NETWORKS: [ApplyNNAction.name],
+    NEURAL_NETWORKS: [DeployYOLOV8Action.name, ApplyNNAction.name],
     OTHER: [DatasetAction.name, DummyAction.name],
     SAVE_ACTIONS: [
         SaveAction.name,
@@ -196,6 +198,7 @@ image_actions_dict = {
     FilterImageWithoutObjects.name: FilterImageWithoutObjects,
     IfAction.name: IfAction,
     # Neural Networks
+    DeployYOLOV8Action.name: DeployYOLOV8Action,
     ApplyNNAction.name: ApplyNNAction,
     # Other layers
     DatasetAction.name: DatasetAction,

@@ -9,6 +9,9 @@ from supervisely.app.widgets import (
     Checkbox,
     Editor,
     ModelInfo,
+    SelectAppSession,
+    Button,
+    NotificationBox,
 )
 from src.ui.widgets import ClassesList, ClassesListPreview, TagsList, TagsListPreview
 
@@ -27,6 +30,7 @@ def update_model_info_preview(
     try:
         connect_nn_model_info.loading = True
         connect_nn_model_info.set_session_id(session_id)
+        connect_nn_model_info.show()
     except:
         connect_nn_model_info_empty_text.set(
             "Couldn't connect to model. Check deployed model logs", status="error"
@@ -235,6 +239,62 @@ def set_model_settings_preview(
 
 
 ### OTHER
+
+
+# to use with deploy nodes
+def reset_model(
+    connect_nn_model_selector: SelectAppSession,
+    connect_nn_model_info: ModelInfo,
+    connect_nn_model_info_empty_text: Text,
+    connect_nn_model_preview: Text,
+    classes_list_widget: ClassesList,
+    classes_list_preview: ClassesListPreview,
+    classes_list_edit_container: Container,
+    tags_list_widget: TagsList,
+    tags_list_preview: TagsListPreview,
+    tags_list_edit_container: Container,
+    inf_settings_edit_container: Container,
+    suffix_preview: Text,
+    use_suffix_preview: Text,
+    conflict_method_preview: Text,
+    apply_method_preview: Text,
+    connect_notification: NotificationBox,
+    update_preview_btn: Button,
+):
+    # reset model selector
+    try:
+        connect_nn_model_selector.set_session_id(None)
+        connect_nn_model_info.set_session_id(None)
+    except:
+        pass
+    connect_nn_model_info.hide()
+    connect_nn_model_info_empty_text.show()
+    connect_nn_model_preview.set("No model selected", "text")
+    connect_nn_model_preview.hide()
+
+    # reset classes
+    classes_list_widget.set([])
+    classes_list_preview.set([])
+
+    classes_list_preview.hide()
+    classes_list_edit_container.hide()
+
+    # reset tags
+    tags_list_widget.set([])
+    tags_list_preview.set([])
+    tags_list_preview.hide()
+    tags_list_edit_container.hide()
+
+    # reset settings
+    inf_settings_edit_container.hide()
+    suffix_preview.hide()
+    use_suffix_preview.hide()
+    conflict_method_preview.hide()
+    apply_method_preview.hide()
+
+    # reset layout
+    connect_notification.show()
+    update_preview_btn.disable()
 
 
 def set_default_model_settings(

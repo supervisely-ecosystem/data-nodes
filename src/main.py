@@ -3,7 +3,7 @@ import time
 from supervisely import Application, ProjectInfo, DatasetInfo
 
 from src.ui.ui import layout, header
-from src.ui.tabs.configure import update_metas, update_nodes, nodes_flow
+from src.ui.tabs.configure import update_state, update_nodes, nodes_flow
 from src.ui.tabs.presets import load_json
 
 from src.ui.dtl.actions.data.data import DataAction
@@ -41,7 +41,7 @@ def _update_f():
                 load_json()
                 continue
             if "metas" in updates:
-                update_metas()
+                update_state()
             for u in updates:
                 if isinstance(u, tuple):
                     if u[0] == "nodes":
@@ -80,3 +80,5 @@ if g.PROJECT_ID:
 
 # if g.FILE:
 #     g.updater("load_json")
+
+app.call_before_shutdown(u.on_app_shutdown)

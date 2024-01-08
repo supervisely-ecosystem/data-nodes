@@ -142,6 +142,7 @@ def create_inference_settings_widgets():
         use_suffix_preview,
         conflict_method_preview,
         apply_method_preview,
+        inf_settings_edit_text,
         inf_settings_edit_container,
         inf_settings_widgets_container,
         inf_settings_preview_container,

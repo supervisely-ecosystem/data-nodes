@@ -44,6 +44,11 @@ def create_connect_to_model_widgets() -> tuple:
     connect_nn_edit_container = get_set_settings_container(connect_nn_text, connect_nn_edit_btn)
     connect_nn_save_btn = create_save_btn()
     connect_nn_model_selector = SelectAppSession(team_id=g.TEAM_ID, tags=SESSION_TAGS)
+    connect_nn_model_selector_disabled_text = Text(
+        "Model has been connected from deploy node. Unplug deploy node if you want to manually select model",
+        "info",
+    )
+    connect_nn_model_selector_disabled_text.hide()
 
     connect_nn_model_field = Field(
         title="Select deployed model",
@@ -62,7 +67,12 @@ def create_connect_to_model_widgets() -> tuple:
         content=connect_nn_model_info_container,
     )
     connect_nn_widgets_container = Container(
-        widgets=[connect_nn_model_field, connect_nn_model_info_field, connect_nn_save_btn]
+        widgets=[
+            connect_nn_model_field,
+            connect_nn_model_selector_disabled_text,
+            connect_nn_model_info_field,
+            connect_nn_save_btn,
+        ]
     )
 
     return (
@@ -73,6 +83,7 @@ def create_connect_to_model_widgets() -> tuple:
         connect_nn_save_btn,
         connect_nn_model_selector,
         connect_nn_model_field,
+        connect_nn_model_selector_disabled_text,
         connect_nn_model_info,
         connect_nn_model_info_empty_text,
         connect_nn_model_info_container,

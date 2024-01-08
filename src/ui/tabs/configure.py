@@ -341,7 +341,7 @@ def update_nodes(layer_id: str = None):
 
 
 @handle_exception
-def update_metas():
+def update_state():
     try:
         edges = nodes_flow.get_edges_json()
         nodes_state = nodes_flow.get_nodes_state_json()
@@ -375,7 +375,7 @@ def update_metas():
             layer.modifies_data(modifies_data)
 
         net.preview_mode = True
-        ui_utils.init_output_metas(net, data_layers_ids, all_layers_ids, nodes_state, edges)
+        ui_utils.init_nodes_state(net, data_layers_ids, all_layers_ids, nodes_state, edges)
 
     except CustomException as e:
         ui_utils.show_error("Error updating nodes", e)

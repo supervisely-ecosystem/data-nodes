@@ -104,6 +104,7 @@ def create_class_entry(item: ObjClass, suffix: str = None):
         "title": title,
         "shape": item.geometry_type.geometry_name(),
         "color": item.color,
+        "geometry_config": item.geometry_config,
     }
 
 

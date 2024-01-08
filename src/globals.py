@@ -12,6 +12,7 @@ load_dotenv(os.path.expanduser("~/supervisely.env"))
 
 TEAM_ID = sly.env.team_id()
 WORKSPACE_ID = sly.env.workspace_id()
+USER_ID = sly.env.user_id()
 DATA_DIR = "sly_task_data/data"
 RESULTS_DIR = "sly_task_data/results"
 PREVIEW_DIR = "sly_task_data/preview"
@@ -112,3 +113,6 @@ error_dialog = Dialog(
 @error_close_btn.click
 def on_error_close():
     error_dialog.hide()
+
+
+running_sessions_ids = []

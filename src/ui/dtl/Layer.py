@@ -38,6 +38,7 @@ class Layer:
         need_preview: bool = True,
         id: Optional[str] = None,
         custom_update_btn: Button = None,
+        get_data: Optional[callable] = None,
     ):
         self.action = action
         self.id = id
@@ -50,6 +51,7 @@ class Layer:
         self._get_dst = get_dst
         self._data_changed_cb = data_changed_cb
         self._need_preview = need_preview
+        self._get_data = get_data
 
         self._src = []
         self._settings = {}
@@ -285,6 +287,15 @@ class Layer:
 
     def get_ann(self):
         return self._res_ann
+    
+    def get_data(self):
+        if self._get_data is None:
+            return {}
+        return self._get_data()
+
+    def update_data(self, data: dict):
+        if self._data_changed_cb is not None:
+            self._data_changed_cb(**data)
 
     def update_project_meta(self, project_meta: ProjectMeta):
         if self._data_changed_cb is not None:

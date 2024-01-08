@@ -3,6 +3,25 @@ from src.ui.widgets import ClassesListPreview, TagsListPreview
 from src.ui.dtl.utils import get_set_settings_button_style
 
 
+# def create_separators() -> tuple:
+#     connect_model_separator = (
+#         NodesFlow.Node.Option(
+#             name=f"Connect Model Separator",
+#             option_component=NodesFlow.HtmlOptionComponent("<hr>"),
+#         ),
+#     )
+#     classes_separator = (
+#         NodesFlow.Node.Option(
+#             name=f"Classes Separator",
+#             option_component=NodesFlow.HtmlOptionComponent("<hr>"),
+#         ),
+#     )
+#     tags_separator = NodesFlow.Node.Option(
+#         name=f"Tags Separator",
+#         option_component=NodesFlow.HtmlOptionComponent("<hr>"),
+#     )
+
+
 def create_preview_button_widget() -> Button:
     ### UPDATE PREVIEW BUTTON
     update_preview_btn = Button(
