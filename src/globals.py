@@ -1,9 +1,19 @@
 import os
-import queue
+
+from queue import Queue
+
 from dotenv import load_dotenv
 
 import supervisely as sly
-from supervisely.app.widgets import Dialog, Text, Editor, Container, Button, Flexbox
+from supervisely.app.widgets import (
+    Dialog,
+    Text,
+    Editor,
+    Container,
+    Button,
+    Flexbox,
+    NotificationBox,
+)
 
 
 load_dotenv("local.env")
@@ -12,20 +22,32 @@ load_dotenv(os.path.expanduser("~/supervisely.env"))
 
 TEAM_ID = sly.env.team_id()
 WORKSPACE_ID = sly.env.workspace_id()
+USER_ID = sly.env.user_id()
 DATA_DIR = "sly_task_data/data"
 RESULTS_DIR = "sly_task_data/results"
 PREVIEW_DIR = "sly_task_data/preview"
 STATIC_DIR = "static"
+
+sly.fs.mkdir(DATA_DIR, True)
+sly.fs.mkdir(RESULTS_DIR, True)
+sly.fs.mkdir(PREVIEW_DIR, True)
+
 TEAM_FILES_PATH = "data-nodes"
 PROJECT_ID = sly.env.project_id(raise_not_found=False)
 DATASET_ID = sly.env.dataset_id(raise_not_found=False)
 # FILE = sly.env.team_files_file(raise_not_found=False)
 SUPPORTED_MODALITIES = ["images", "videos"]
 
-SUPPORTED_MODALITIES_MAP = {"images": sly.ProjectType.IMAGES, "videos": sly.ProjectType.VIDEOS}
+SUPPORTED_MODALITIES_MAP = {
+    "images": sly.ProjectType.IMAGES,
+    "videos": sly.ProjectType.VIDEOS,
+}
 
 
 api = sly.Api()
+
+
+ava_ag = api.agent.get_list_available(team_id=TEAM_ID)
 
 MODALITY_TYPE = os.getenv("modal.state.modalityType", "images")
 if PROJECT_ID is not None:
@@ -55,7 +77,10 @@ layers_count = 0
 layers = {}
 
 
-update_queue = queue.Queue()
+update_queue = Queue()
+
+pipeline_running = False
+pipeline_thread = None
 
 
 def updater(update: str):
@@ -102,6 +127,9 @@ error_dialog = Dialog(
     size="tiny",
 )
 
+warn_notification = NotificationBox(title="", description="", box_type="warning")
+warn_notification.hide()
+
 # Auto-connect to node
 # uncomment to work:
 # src/ui/ui.py line 28
@@ -112,3 +140,6 @@ error_dialog = Dialog(
 @error_close_btn.click
 def on_error_close():
     error_dialog.hide()
+
+
+running_sessions_ids = []

@@ -1,4 +1,5 @@
 import time
+from collections import defaultdict
 
 # import random
 from supervisely.app.widgets import (
@@ -14,8 +15,10 @@ from supervisely.app.widgets import (
     Input,
     Markdown,
     OneOf,
+    Card,
 )
 from supervisely.app import show_dialog
+from src.ui.dtl.Action import SourceAction
 
 from src.ui.dtl.Layer import Layer
 from src.ui.dtl import actions_dict, actions_list
@@ -73,6 +76,12 @@ nodes_flow = NodesFlow(
     context_menu=context_menu_items,
     color_theme="light",
     show_save=False,
+)
+
+nodes_flow_card = Card(
+    content=nodes_flow,
+    lock_message="Pipeline is in progress...",
+    remove_padding=True,
 )
 
 select_items = [
@@ -152,10 +161,11 @@ left_sidebar_widgets = [
     modality_type_text,
     *[left_sidebar_groups_widgets[group_name] for group_name in actions_list.keys()],
 ]
+
 sidebar = Sidebar(
     left_content=Container(widgets=left_sidebar_widgets, style="padding-top: 10px;", gap=15),
-    right_content=nodes_flow,
-    width_percent=20,
+    right_content=nodes_flow_card,
+    width_percent=22.05,
     standalone=True,
     height="calc(100vh - 57px)",
     clear_main_panel_paddings=True,
@@ -230,6 +240,13 @@ def item_dropped_cb(item):
     action_name = item["item"]["key"]
     add_layer(action_name, position)
     g.context_menu_position = None
+
+
+@nodes_flow.node_removed
+def node_removed(layer_id):
+    if layer_id.startswith("deploy"):
+        utils.kill_deployed_app_by_layer_id(layer_id)
+    g.layers.pop(layer_id)
 
 
 @add_layer_from_dialog_btn.click
@@ -325,6 +342,7 @@ def update_nodes(layer_id: str = None):
             net = Net(dtl_json, g.RESULTS_DIR, g.MODALITY_TYPE)
             net.preview_mode = True
 
+            ui_utils.init_nodes_state(net, data_layers_ids, all_layers_ids, nodes_state, edges)
             ui_utils.update_preview(net, data_layers_ids, all_layers_ids, layer_id)
 
     except CustomException as e:
@@ -341,7 +359,7 @@ def update_nodes(layer_id: str = None):
 
 
 @handle_exception
-def update_metas():
+def update_state():
     try:
         edges = nodes_flow.get_edges_json()
         nodes_state = nodes_flow.get_nodes_state_json()
@@ -375,7 +393,7 @@ def update_metas():
             layer.modifies_data(modifies_data)
 
         net.preview_mode = True
-        ui_utils.init_output_metas(net, data_layers_ids, all_layers_ids, nodes_state, edges)
+        ui_utils.init_nodes_state(net, data_layers_ids, all_layers_ids, nodes_state, edges)
 
     except CustomException as e:
         ui_utils.show_error("Error updating nodes", e)
@@ -388,13 +406,38 @@ def update_metas():
 
 
 def update_nodes_cb():
-    g.updater(("nodes", None))
+    layer_sources = defaultdict(list)
+
+    layers_to_update = []
+    edges = nodes_flow.get_edges_json()
+    for edge in edges:
+        from_node_id = edge["output"]["node"]
+        from_node_interface = edge["output"]["interface"]
+        to_node_id = edge["input"]["node"]
+        try:
+            layer = g.layers[to_node_id]
+        except:
+            continue
+        layer: Layer
+        src_name = layer._connection_name(from_node_id, from_node_interface)
+        layer_sources[to_node_id].append(src_name)
+
+    for layer_id, layer in g.layers.items():
+        layer: Layer
+        if issubclass(layer.action, SourceAction):
+            continue
+
+        src_names = layer_sources[layer_id]
+        if set(src_names) != set(layer._src):
+            layers_to_update.append(layer.id)
+    for layer_id in layers_to_update:
+        g.updater(("nodes", layer_id))
 
 
 def update_metas_cb():
     g.updater("metas")
 
 
-nodes_flow.flow_changed(update_metas_cb)
+nodes_flow.flow_changed(update_nodes_cb)
 nodes_flow.flow_state_changed(update_metas_cb)
 nodes_flow.on_save(update_metas_cb)

@@ -3,8 +3,8 @@
 
 import os
 import time
-from threading import Lock
 
+from threading import Lock
 from supervisely.sly_logger import logger
 
 
@@ -35,10 +35,10 @@ class StatTimer:
         curr_list.append(val_sec)
         if len(curr_list) >= self.logging_interval:
             msec_per_one = sum(curr_list) / float(len(curr_list)) * 1000.0
-            logger.trace('StatTimer {}'.format(name), extra={'msec': msec_per_one})
+            logger.trace("StatTimer {}".format(name), extra={"msec": msec_per_one})
             curr_list[:] = []  # clear
 
         self.lock.release()
 
 
-global_timer = StatTimer(int(os.getenv('STAT_TIMER_LOG_EVERY_RECORDS', '20')))
+global_timer = StatTimer(int(os.getenv("STAT_TIMER_LOG_EVERY_RECORDS", "20")))

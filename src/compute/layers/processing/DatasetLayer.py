@@ -3,6 +3,7 @@
 from copy import deepcopy
 
 from src.compute.Layer import Layer
+from src.exceptions import BadSettingsError
 
 
 class DatasetLayer(Layer):
@@ -39,7 +40,7 @@ class DatasetLayer(Layer):
     def validate(self):
         super().validate()
         if len(self.settings.get("name", "")) > 2048:
-            raise RuntimeError("Dataset name is too long, huh?")
+            raise BadSettingsError("Dataset name is too long, huh?")
 
     def modifies_data(self):
         return True

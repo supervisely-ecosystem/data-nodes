@@ -11,7 +11,7 @@ from src.compute.dtl_utils.item_descriptor import ImageDescriptor
 from src.exceptions import WrongGeometryError
 
 
-class DropNoiseFromBitmap(Layer):
+class DropNoiseFromBitmapLayer(Layer):
     action = "drop_noise"
 
     layer_settings = {

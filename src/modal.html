@@ -4,22 +4,26 @@
 	description="There are nodes for different data types - images, videos, 3D point clouds and DICOM volumes"
 >
 	<el-radio-group v-model="state.modalityType">
-	  <div>
-		<el-radio label="images"><b>Images</el-radio>
+		<div>
+			<el-radio label="images"><b>Images</b></el-radio>
 		</div>
 		<div>
-		<el-radio label="videos"><b>Videos</b></el-radio>
+			<el-radio label="videos"><b>Videos</b></el-radio>
 		</div>
 		<div>
-		<el-radio label="point_clouds" disabled="true"><b>3D point clouds (coming soon)</b></el-radio>
+			<el-radio label="point_clouds" :disabled="true"
+				><b>3D point clouds (coming soon)</b></el-radio
+			>
 		</div>
 		<div>
-		<el-radio label="volumes" disabled="true"><b>DICOM volumes (coming soon)</b></el-radio>
+			<el-radio label="volumes" :disabled="true"
+				><b>DICOM volumes (coming soon)</b></el-radio
+			>
 		</div>
 		<div>
-		<el-radio label="combined" disabled="true"
-			><b>Сombination of different modalities (coming soon)</b></el-radio
-		>
+			<el-radio label="combined" :disabled="true"
+				><b>Сombination of different modalities (coming soon)</b></el-radio
+			>
 		</div>
 	</el-radio-group>
 </sly-field>

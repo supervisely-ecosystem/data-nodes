@@ -51,17 +51,17 @@ class TagsList(Widget):
         return {"selected": [False for _ in self._tag_metas]}
 
     def set(self, tags: Union[List[TagMeta], TagMetaCollection]):
-        selected_tags = [cls.name for cls in self.get_selected_tags()]
+        selected_tags = [tag.name for tag in self.get_selected_tags()]
         self._tag_metas = tags
         StateJson()[self.widget_id]["selected"] = [
-            cls.name in selected_tags for cls in self._tag_metas
+            tag.name in selected_tags for tag in self._tag_metas
         ]
         self.update_data()
         StateJson().send_changes()
 
     def get_selected_tags(self):
         selected = StateJson()[self.widget_id]["selected"]
-        return [cls for cls, is_selected in zip(self._tag_metas, selected) if is_selected]
+        return [tag for tag, is_selected in zip(self._tag_metas, selected) if is_selected]
 
     def select_all(self):
         StateJson()[self.widget_id]["selected"] = [True for _ in self._tag_metas]
@@ -72,14 +72,14 @@ class TagsList(Widget):
         StateJson().send_changes()
 
     def select(self, names: List[str]):
-        selected = [cls.name in names for cls in self._tag_metas]
+        selected = [tag.name in names for tag in self._tag_metas]
         StateJson()[self.widget_id]["selected"] = selected
         StateJson().send_changes()
 
     def deselect(self, names: List[str]):
         selected = StateJson()[self.widget_id]["selected"]
-        for idx, cls in enumerate(self._tag_metas):
-            if cls.name in names:
+        for idx, tag in enumerate(self._tag_metas):
+            if tag.name in names:
                 selected[idx] = False
         StateJson()[self.widget_id]["selected"] = selected
         StateJson().send_changes()

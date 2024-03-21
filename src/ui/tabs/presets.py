@@ -1,5 +1,6 @@
 import random
 import json
+from time import sleep
 
 from supervisely.app.widgets import (
     Button,
@@ -18,7 +19,7 @@ from supervisely.app import show_dialog
 from src.compute.Net import Net
 from src.ui.dtl.Layer import Layer
 from src.ui.dtl.Action import SourceAction
-from src.ui.dtl import actions_list
+from src.ui.dtl import actions_list, actions_dict_legacy
 from src.ui.dtl import SOURCE_ACTIONS
 from src.ui.tabs.configure import nodes_flow
 import src.ui.utils as ui_utils
@@ -171,12 +172,36 @@ def apply_json(dtl_json):
     # create layer objects
     ids = []
     data_layers_ids = []
-    for layer_json in dtl_json:
+    for idx, layer_json in enumerate(dtl_json):
+        original_action_name = layer_json.get("action", None)
         action_name = layer_json.get("action", None)
-        if action_name is None:
+        if original_action_name is None:
             raise BadSettingsError(
                 'Missing "action" field in layer config', extra={"layer_config": layer_json}
             )
+
+        legacy_action_name = actions_dict_legacy.get(original_action_name, None)
+        if legacy_action_name is not None:
+            action_name = legacy_action_name
+        else:
+            action_name = original_action_name
+
+        dtl_json[idx]["action"] = dtl_json[idx]["action"].replace(original_action_name, action_name)
+        for i, src in enumerate(dtl_json[idx]["src"]):
+            src_action_name = src[1:].rsplit("_", 1)[0]
+            if src_action_name in actions_dict_legacy:
+                dtl_json[idx]["src"][i] = dtl_json[idx]["src"][i].replace(
+                    src_action_name, actions_dict_legacy[src_action_name]
+                )
+        if isinstance(dtl_json[idx]["dst"], list):
+            for i, dst in enumerate(dtl_json[idx]["dst"]):
+                if dst in actions_dict_legacy:
+                    dtl_json[idx]["dst"][i] = dtl_json[idx]["dst"][i].replace(
+                        dst, actions_dict_legacy[dst]
+                    )
+        else:
+            dtl_json[idx]["dst"] = dtl_json[idx]["dst"].replace(original_action_name, action_name)
+
         settings = layer_json.get("settings", None)
         if settings is None:
             raise BadSettingsError(
@@ -303,6 +328,8 @@ def apply_json(dtl_json):
                         except:
                             pass
     nodes_flow.set_edges(nodes_flow_edges)
+    g.updater(("nodes", None))
+    sleep(1)  # delay for previews to load
 
 
 @load_preset_btn.click

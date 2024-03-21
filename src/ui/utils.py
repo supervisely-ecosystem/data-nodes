@@ -115,12 +115,15 @@ def init_src(edges: list):
         except KeyError:
             raise LayerNotFoundError(to_node_id)
         layer: Layer
+        # if source already in layer -> pass
         layer.add_source(from_node_id, from_node_interface)
 
 
-def init_output_metas(
+def init_nodes_state(
     net: Net, data_layers_ids: list, all_layers_ids: list, nodes_state: dict, edges: list
 ):
+    """Update nodes project meta and data"""
+
     def calc_metas(net):
         # Call meta changed callbacks for Data layers
         for layer_id in data_layers_ids:
@@ -136,9 +139,9 @@ def init_output_metas(
             layer.update_project_meta(layer_input_meta)
 
         cur_level_layers_idxs = {
-            idx for idx, layer in enumerate(net.layers) if layer.type == "data"
+            idx for idx, layer in enumerate(net.layers) if layer.type == "data" or not layer.srcs
         }
-        datalevel_metas = {}
+        metas_dict = {}
         for data_layer_idx in cur_level_layers_idxs:
             data_layer = net.layers[data_layer_idx]
             try:
@@ -148,7 +151,7 @@ def init_output_metas(
             except KeyError:
                 input_meta = ProjectMeta()
             for src in data_layer.srcs:
-                datalevel_metas[src] = input_meta
+                metas_dict[src] = input_meta
 
         def get_dest_layers_idxs(the_layer_idx):
             the_layer = net.layers[the_layer_idx]
@@ -160,8 +163,9 @@ def init_output_metas(
 
         def layer_input_metas_are_calculated(the_layer_idx):
             the_layer = net.layers[the_layer_idx]
-            return all((x in datalevel_metas for x in the_layer.srcs))
+            return all((x in metas_dict for x in the_layer.srcs))
 
+        datas_dict = {}
         processed_layers = set()
         while len(cur_level_layers_idxs) != 0:
             next_level_layers_idxs = set()
@@ -170,14 +174,22 @@ def init_output_metas(
                 cur_layer = net.layers[cur_layer_idx]
                 processed_layers.add(cur_layer_idx)
                 # TODO no need for dict here?
-                cur_layer_input_metas = {src: datalevel_metas[src] for src in cur_layer.srcs}
+                cur_layer_input_metas = {src: metas_dict[src] for src in cur_layer.srcs}
 
-                # update ui layer meta
+                # update ui layer meta and data
                 merged_meta = utils.merge_input_metas(cur_layer_input_metas.values())
                 ui_layer_id = all_layers_ids[cur_layer_idx]
                 ui_layer = g.layers[ui_layer_id]
                 ui_layer: Layer
-                ui_layer.update_project_meta(merged_meta)
+                merged_data = {}
+                # gather data from all sources
+                for src in ui_layer.get_src():
+                    merged_data.update(datas_dict.get(find_layer_id_by_dst(src), {}))
+                # update data in node
+                ui_layer.update_data({**merged_data, "project_meta": merged_meta})
+                # get update data to use in next nodes
+                merged_data.update(ui_layer.get_data())
+                datas_dict[ui_layer_id] = merged_data
 
                 # update settings according to new meta
                 node_options = nodes_state.get(ui_layer_id, {})
@@ -208,7 +220,7 @@ def init_output_metas(
                 ui_layer.output_meta = cur_layer_res_meta
 
                 for dst in cur_layer.dsts:
-                    datalevel_metas[dst] = cur_layer_res_meta
+                    metas_dict[dst] = cur_layer_res_meta
 
                 # yield cur_layer_res_meta, cur_layer_idx
 
@@ -226,7 +238,7 @@ def init_output_metas(
         if layer_idx not in processed_layers:
             ui_layer_id = all_layers_ids[layer_idx]
             ui_layer = g.layers[ui_layer_id]
-            ui_layer.update_project_meta(ProjectMeta())
+            ui_layer.update_data({"project_meta": ProjectMeta()})
     return net
 
 
@@ -326,7 +338,12 @@ def update_preview(net: Net, data_layers_ids: list, all_layers_ids: list, layer_
     layer = g.layers[layer_id]
     layer.clear_preview()
 
-    layer_idx = all_layers_ids.index(layer_id)
+    try:
+        layer_idx = all_layers_ids.index(layer_id)
+    except:
+        # hack, fix later
+        g.layers.pop(layer_id)
+        return
 
     net.preview_mode = True
     net.calc_metas()

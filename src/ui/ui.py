@@ -1,4 +1,4 @@
-from supervisely.app.widgets import Container, Flexbox, Button, Dialog, Empty
+from supervisely.app.widgets import Container, Flexbox, Button, Dialog
 
 from src.ui.tabs.configure import layout as configure_tab_layout
 from src.ui.tabs.presets import (

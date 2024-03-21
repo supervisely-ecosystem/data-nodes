@@ -5,10 +5,11 @@ from os.path import join
 import shutil
 from copy import deepcopy
 from typing import Tuple
+from time import time
 
 import jsonschema
 
-from supervisely import ProjectMeta, TagMeta, ObjClass, TagMetaCollection, Annotation, rand_str
+from supervisely import ProjectMeta, TagMeta, ObjClass, Annotation, rand_str
 from src.compute.dtl_utils.item_descriptor import ImageDescriptor
 from src.compute.utils import json_utils
 from src.compute.utils import os_utils
@@ -19,7 +20,7 @@ from supervisely.imaging.color import hex2rgb
 
 from src.compute.classes_utils import ClassConstants
 from src.compute.tags_utils import TagConstants
-from src.exceptions import CustomException, GraphError, CreateMetaError, UnexpectedError
+from src.exceptions import CustomException, GraphError, CreateMetaError
 
 
 def maybe_wrap_in_list(v):
@@ -35,6 +36,7 @@ def check_connection_name(connection_name):
 
 class Layer:
     null = "null"
+    # action = "layer"
 
     base_params = {
         "definitions": {
@@ -86,6 +88,7 @@ class Layer:
         self.dsts = maybe_wrap_in_list(config["dst"])
 
         self.settings = config.get("settings", {})
+        self.postprocess_cb = config.get("postprocess_cb", None)
 
         self.cls_mapping = {}
         self.tag_mapping = {}
@@ -216,10 +219,13 @@ class Layer:
                         new_name = new_cls_dict["title"]
                         new_shape = new_cls_dict["shape"]
                         new_geometry_type = GET_GEOMETRY_FROM_STR(new_shape)
+                        new_geometry_config = new_cls_dict.get("geometry_config")
                         new_color = new_cls_dict.get("color", None)
                         if new_color is not None and new_color[0] == "#":
                             new_color = hex2rgb(new_color)
-                        inp_obj_class = ObjClass(new_name, new_geometry_type, new_color)
+                        inp_obj_class = ObjClass(
+                            new_name, new_geometry_type, new_color, new_geometry_config
+                        )
                         if res_meta.obj_classes.has_key(new_name):
                             existing_obj_class = res_meta.obj_classes.get(new_name)
                             if existing_obj_class.geometry_type != new_geometry_type:
@@ -544,6 +550,20 @@ class Layer:
 
     def preprocess(self):
         pass
+
+    # def process_timer(func):
+    #     def wrapper(self, *args, **kwargs):
+    #         if self.net.preview_mode:
+    #             result = func(self, *args, **kwargs)
+    #         else:
+    #             start_time = time()
+    #             result = func(self, *args, **kwargs)
+    #             end_time = time()
+    #             logger.debug(
+    #                 f"{self.action} '{func.__name__}' time: {end_time - start_time:.10f} seconds."
+    #             )
+    #         return result
+    # return wrapper
 
     def process(self, data_el: Tuple[ImageDescriptor, Annotation]):
         raise NotImplementedError()

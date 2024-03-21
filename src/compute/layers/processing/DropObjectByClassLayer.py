@@ -10,8 +10,9 @@ from src.compute.dtl_utils.item_descriptor import ImageDescriptor
 from src.compute.dtl_utils import apply_to_labels
 
 
-class DropObjByClassLayer(Layer):
-    action = "drop_obj_by_class"
+class DropObjectByClassLayer(Layer):
+    action = "drop_object_by_class"
+    legacy_action = "drop_obj_by_class"
 
     layer_settings = {
         "required": ["settings"],

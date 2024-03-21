@@ -1,18 +1,7 @@
 # coding: utf-8
-from typing import Tuple, List
+from typing import Tuple
 
-from supervisely import (
-    Annotation,
-    Label,
-    ProjectMeta,
-    Bitmap,
-    PointLocation,
-    Tag,
-    Point,
-    Polygon,
-    Rectangle,
-    Polyline,
-)
+from supervisely import Annotation, Label, ProjectMeta
 
 from src.compute.Layer import Layer
 from src.compute.classes_utils import ClassConstants
@@ -21,6 +10,7 @@ from src.compute.dtl_utils import apply_to_labels
 from src.utils import get_project_by_name, get_project_meta
 from src.exceptions import BadSettingsError
 import src.globals as g
+from src.exceptions import GraphError
 
 
 class InputLabelingJobLayer(Layer):
@@ -68,7 +58,7 @@ class InputLabelingJobLayer(Layer):
         settings = self.settings
         job_id = settings.get("job_id", None)
         if job_id is None:
-            raise RuntimeError("Labeling Job is not selected")
+            raise GraphError("Labeling Job is not selected")
         super().validate()
 
     @classmethod

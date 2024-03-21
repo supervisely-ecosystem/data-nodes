@@ -2,7 +2,16 @@ from typing import List, Literal, Union
 from os.path import join, exists
 
 from supervisely import ObjClass, ObjClassCollection, TagMeta, TagMetaCollection
-from supervisely.app.widgets import NodesFlow, Container, Text, Button, Empty, ClassesTable
+from supervisely.app.widgets import (
+    NodesFlow,
+    Container,
+    Text,
+    Button,
+    Empty,
+    ClassesTable,
+    Flexbox,
+    TagsTable,
+)
 
 from src.ui.widgets import (
     ClassesMapping,
@@ -177,6 +186,9 @@ def set_classes_mapping_preview(
     default_action: Literal["skip", "keep", "copy"] = "skip",
     ignore_action: Literal["skip", "keep", "empty"] = "skip",
     missing_value: Literal["default", "ignore"] = "ignore",
+    classes_mapping_preview_text: Text = None,
+    classes_mapping_text_preview_title="Classes Mapping",
+    show_counter: bool = True,
 ):
     obj_classes = classes_mapping_widget.get_classes()
     obj_classes_names = [obj_class.name for obj_class in obj_classes]
@@ -189,6 +201,14 @@ def set_classes_mapping_preview(
     classes_mapping_preview_widget.set(
         [obj_class for obj_class in obj_classes if obj_class.name in packed], packed
     )
+
+    if classes_mapping_preview_text is not None:
+        if show_counter:
+            classes_mapping_preview_text.set(
+                f"{classes_mapping_text_preview_title}: {len(packed)} / {len(obj_classes)}", "text"
+            )
+        else:
+            classes_mapping_preview_text.set({classes_mapping_text_preview_title}, "text")
 
 
 def set_classes_mapping_settings_from_json(
@@ -307,6 +327,7 @@ def set_classes_list_preview(
     classes_list_settings: Union[list, str],
     classes_list_text_preview: Text = None,
     classes_list_text_preview_title: str = "Classes",
+    show_counter: bool = True,
 ):
     if isinstance(classes_list_settings, str):
         if classes_list_settings == "default":
@@ -358,10 +379,13 @@ def set_classes_list_preview(
             else:
                 selected_classes_n = len(names)
 
-        classes_list_text_preview.set(
-            f"{classes_list_text_preview_title}: {selected_classes_n} / {total_classes_n}",
-            "text",
-        )
+        if show_counter:
+            classes_list_text_preview.set(
+                f"{classes_list_text_preview_title}: {selected_classes_n} / {total_classes_n}",
+                "text",
+            )
+        else:
+            classes_list_text_preview.set(f"{classes_list_text_preview_title}", "text")
 
 
 def set_classes_list_settings_from_json(
@@ -380,7 +404,28 @@ def set_classes_list_settings_from_json(
         return
 
 
-# tags
+# tags mapping utils
+
+
+def tags_list_to_mapping(
+    selected_tags: list,
+    all_tags: list,
+    other: Literal["skip", "default", "ignore"] = "skip",
+    default_allowed: bool = False,
+):
+    if default_allowed and len(selected_tags) == len(all_tags):
+        return "default"
+    mapping = {}
+    for cls_name in selected_tags:
+        mapping[cls_name] = cls_name
+    if other == "skip":
+        return mapping
+    if len(mapping) < len(all_tags):
+        mapping["__other__"] = f"__{other}__"
+    return mapping
+
+
+# tags list utils
 
 
 def tags_list_settings_changed_meta(
@@ -407,27 +452,66 @@ def set_tags_list_settings_from_json(tags_list_widget: TagsList, settings: Union
 
 
 def set_tags_list_preview(
-    tags_list_widget: TagsList,
+    tags_list_widget: Union[TagsList, TagsTable],
     tags_list_preview_widget: TagsListPreview,
     tags_list_settings: Union[list, str],
+    tags_list_text_preview: Text = None,
+    tags_list_text_preview_title: str = "Tags",
+    show_counter: bool = True,
 ):
     if isinstance(tags_list_settings, str):
         if tags_list_settings == "default":
             if isinstance(tags_list_widget, TagsList):
                 tags_list_preview_widget.set(tags_list_widget.get_all_tags())
-            # TO BE ADDED WHEN TagsMapping IS READY
-            # elif isinstance(tags_list_widget, TagsMapping):
-            #   tags_list_preview_widget.set(tags_list_widget.get_tags())
-            return
+            else:
+                tags_list_widget.select_all()
+                meta = tags_list_widget.project_meta
+                if meta is None:
+                    all_tags = []
+                else:
+                    all_tags = [obj_class for obj_class in meta.tag_metas]
+                tags_list_preview_widget.set(all_tags)
+
         names = [tags_list_settings]
     else:
         names = tags_list_settings
 
-    tag_metas = tags_list_widget.get_all_tags()
-    tags_list_preview_widget.set([tag_meta for tag_meta in tag_metas if tag_meta.name in names])
+    if not isinstance(tags_list_widget, TagsTable):
+        # both TagsList and TagsMapping
+        tag_metas = tags_list_widget.get_all_tags()
+    else:
+        if tags_list_widget.project_meta is None:
+            tag_metas = []
+        else:
+            tag_metas = [tag_meta for tag_meta in tags_list_widget.project_meta.tag_metas]
+
+    if tags_list_settings != "default":
+        tags_list_preview_widget.set([tag_meta for tag_meta in tag_metas if tag_meta.name in names])
+
+    # set tags N preview
+    if tags_list_text_preview is not None:
+        if isinstance(tags_list_widget, TagsList):
+            total_tags_n = len(tag_metas)
+            selected_tags_n = len(tags_list_widget.get_selected_tags())
+        else:
+            if tags_list_widget.project_meta is None:
+                total_tags_n = 0
+            else:
+                total_tags_n = len(tags_list_widget.project_meta.tag_metas)
+            if len(names) > 0 and names[0] == "default":
+                selected_tags_n = total_tags_n
+            else:
+                selected_tags_n = len(names)
+
+        if show_counter:
+            tags_list_text_preview.set(
+                f"{tags_list_text_preview_title}: {selected_tags_n} / {total_tags_n}", "text"
+            )
+        else:
+            tags_list_text_preview.set(f"{tags_list_text_preview_title}", "text")
 
 
-def get_tags_list_value(tags_list_widget: TagsList, multiple: bool = True):
+def get_tags_list_value(tags_list_widget: Union[TagsList, TagsTable], multiple: bool = True):
     selected = tags_list_widget.get_selected_tags()
     if multiple:
         if isinstance(tags_list_widget, TagsList):
@@ -551,6 +635,23 @@ def create_save_btn() -> Button:
 
 def create_set_default_btn() -> Button:
     return Button("Set Default", button_type="info", plain=True, icon="zmdi zmdi-refresh")
+
+
+def create_sidebar_btn_container(
+    save_btn: Button, default_btn: Button = None, need_separator: bool = True
+):
+    return Container(
+        [
+            Text("<hr>") if need_separator else Empty(),
+            Flexbox(
+                widgets=[
+                    save_btn,
+                    default_btn if default_btn is not None else Empty(),
+                ],
+                gap=110,
+            ),
+        ]
+    )
 
 
 # Layer docs utils
