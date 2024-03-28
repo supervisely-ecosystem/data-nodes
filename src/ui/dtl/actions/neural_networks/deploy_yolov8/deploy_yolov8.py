@@ -34,9 +34,9 @@ class DeployYOLOV8Action(NeuralNetworkAction):
     description = "Deploy YOLOv8 models."
     md_description = get_layer_docs(dirname(realpath(__file__)))
 
-    # @classmethod
-    # def create_inputs(self):
-    #     return []
+    @classmethod
+    def create_inputs(self):
+        return []
 
     @classmethod
     def create_new_layer(cls, layer_id: Optional[str] = None):

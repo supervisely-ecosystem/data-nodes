@@ -45,12 +45,12 @@ class ApplyNNInferenceAction(NeuralNetworkAction):
     description = "Connect to deployed model and apply it to images."
     md_description = get_layer_docs(dirname(realpath(__file__)))
 
-    # @classmethod
-    # def create_inputs(cls):
-    #     return [
-    #         NodesFlow.Node.Input("deployed_model", "Deployed model", color="#000000"),
-    #         NodesFlow.Node.Input("source", "Input", color="#000000"),
-    #     ]
+    @classmethod
+    def create_inputs(cls):
+        return [
+            NodesFlow.Node.Input("deployed_model", "Deployed model", color="#000000"),
+            NodesFlow.Node.Input("source", "Input", color="#000000"),
+        ]
 
     @classmethod
     def create_new_layer(cls, layer_id: Optional[str] = None):
@@ -586,6 +586,33 @@ class ApplyNNInferenceAction(NeuralNetworkAction):
             )
             g.updater("metas")
 
+        def update_sources_cb(connections: List[tuple]) -> List[bool]:
+            need_append = [True] * len(connections)
+
+            deployed_model_connections = []
+            for idx, (src_name, to_node_interface) in enumerate(connections):
+                if to_node_interface == "deployed_model":
+                    deployed_model_connections.append(src_name)
+                    need_append[idx] = False
+
+            if len(deployed_model_connections) > 1:
+                connect_nn_text.set(
+                    "Multiple connections to deployed model are not allowed",
+                    "warning",
+                )
+                return need_append
+
+            elif len(deployed_model_connections) == 1:
+                src_name = deployed_model_connections[0]
+                if src_name.startswith("$deploy_"):
+                    connect_nn_text.set("Deploy node is connected", "success")
+                else:
+                    connect_nn_text.set("Connected layer is not a deploy layer", "warning")
+            else:
+                connect_nn_text.set("Connect to Model", "text")
+
+            return need_append
+
         def create_options(src: list, dst: list, settings: dict) -> dict:
             _set_settings_from_json(settings)
             settings_options = create_layout(
@@ -620,4 +647,5 @@ class ApplyNNInferenceAction(NeuralNetworkAction):
             data_changed_cb=data_changed_cb,
             custom_update_btn=update_preview_btn,
             postprocess_cb=postprocess_cb,
+            update_sources_cb=update_sources_cb,
         )

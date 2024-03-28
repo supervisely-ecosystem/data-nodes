@@ -1,7 +1,7 @@
 import os
 import copy
 import time
-from typing import Optional
+from typing import Optional, List
 import random
 
 from supervisely import Annotation, ProjectMeta
@@ -40,6 +40,7 @@ class Layer:
         custom_update_btn: Button = None,
         get_data: Optional[callable] = None,
         postprocess_cb: Optional[callable] = None,
+        update_sources_cb: Optional[callable] = None,
     ):
         self.action = action
         self.id = id
@@ -60,6 +61,7 @@ class Layer:
 
         self.output_meta = None
         self.postprocess_cb = postprocess_cb
+        self.update_sources_cb = update_sources_cb
 
         md_description = self.action.md_description.replace(
             r"../../assets", r"https://raw.githubusercontent.com/supervisely/docs/master/assets"
@@ -232,9 +234,24 @@ class Layer:
         self._update_dst(node_options)
         self._update_settings(node_options)
 
-    def add_source(self, from_node_id, from_node_interface):
-        src_name = self._connection_name(from_node_id, from_node_interface)
-        self._src.append(src_name)
+    def update_sources(self, connections: List[tuple]):
+        new_sources = []
+        src_names = []
+        for from_node_id, from_node_interface, to_node_interface in connections:
+            src_name = self._connection_name(from_node_id, from_node_interface)
+            src_names.append((src_name, to_node_interface))
+
+        need_append = [True] * len(src_names)
+        if self.update_sources_cb is not None:
+            need_append = self.update_sources_cb(src_names)
+
+        # fix var naming
+        for (src_name, _), to_append in zip(src_names, need_append):
+            if to_append:
+                new_sources.append(src_name)
+
+        if len(new_sources) > 0:
+            self._src = new_sources
 
     def clear_preview(self):
         self._img_desc = None

@@ -106,17 +106,18 @@ def init_layers(nodes_state: dict):
 
 
 def init_src(edges: list):
+    layer_connections = {}
     for edge in edges:
         from_node_id = edge["output"]["node"]
         from_node_interface = edge["output"]["interface"]
+        to_node_interface = edge["input"]["interface"]
         to_node_id = edge["input"]["node"]
-        try:
-            layer = g.layers[to_node_id]
-        except KeyError:
-            raise LayerNotFoundError(to_node_id)
-        layer: Layer
-        # if source already in layer -> pass
-        layer.add_source(from_node_id, from_node_interface)
+        layer_connections.setdefault(to_node_id, []).append(
+            (from_node_id, from_node_interface, to_node_interface)
+        )
+
+    for layer in g.layers.values():
+        layer.update_sources(layer_connections.get(layer.id, []))
 
 
 def init_nodes_state(
