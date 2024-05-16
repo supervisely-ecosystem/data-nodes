@@ -1,7 +1,6 @@
 import random
-import time
+from time import sleep
 from collections import defaultdict
-from typing import List
 
 # import random
 from supervisely.app.widgets import (
@@ -284,7 +283,8 @@ def add_layer(action_name: str, position: dict = None, autoconnect: bool = False
             if autoconnect:
                 maybe_add_edges(layer)
         g.stop_updates = False
-        g.updater(("nodes", layer.id))
+        sleep(0.9)  # delay for previews to load
+        # g.updater(("nodes", layer.id))
     except CustomException as e:
         ui_utils.show_error("Error adding layer", e)
         raise
@@ -346,7 +346,7 @@ def add_layer_from_dialog_btn_cb():
 @filter_actions_input.value_changed
 def filter(value):
     g.cache["last_search"] = value
-    time.sleep(0.4)
+    sleep(0.4)
     if g.cache["last_search"] != value:
         return
 
