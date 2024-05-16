@@ -283,7 +283,7 @@ def add_layer(action_name: str, position: dict = None, autoconnect: bool = False
             if autoconnect:
                 maybe_add_edges(layer)
         g.stop_updates = False
-        sleep(0.9)  # delay for previews to load
+        sleep(1.5)  # delay for previews to load
         # g.updater(("nodes", layer.id))
     except CustomException as e:
         ui_utils.show_error("Error adding layer", e)
