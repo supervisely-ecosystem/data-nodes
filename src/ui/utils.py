@@ -78,7 +78,13 @@ def init_layers(nodes_state: dict):
             layer: Layer
         except KeyError:
             sly.logger.debug(f"Layer with id {node_id} not found")
-            return
+            return {
+                "data_layers_ids": [],
+                "save_layers_ids": [],
+                "transformation_layers_ids": [],
+                "all_layers_ids": [],
+            }
+
             # raise LayerNotFoundError(node_id)
 
         try:
