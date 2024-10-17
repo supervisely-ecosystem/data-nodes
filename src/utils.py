@@ -29,6 +29,8 @@ class LegacyProjectItem:
 def get_random_image(dataset_id: int, images_ids: List[int] = None) -> ImageInfo:
     if images_ids is None:
         images = g.api.image.get_list(dataset_id)
+        if len(images) == 0:
+            raise RuntimeError('No images found in the dataset (id: {}). Unable to generate preview.'.format(dataset_id))
         image = random.choice(images)
         return image
     else:

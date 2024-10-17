@@ -74,11 +74,16 @@ def init_layers(nodes_state: dict):
     all_layers_ids = []
     for node_id, node_options in nodes_state.items():
         try:
-            layer = g.layers[node_id]
-            layer: Layer
+            layer: Layer = g.layers[node_id]
         except KeyError:
             sly.logger.debug(f"Layer with id {node_id} not found")
-            return
+            return {
+                "data_layers_ids": [],
+                "save_layers_ids": [],
+                "transformation_layers_ids": [],
+                "all_layers_ids": [],
+            }
+
             # raise LayerNotFoundError(node_id)
 
         try:

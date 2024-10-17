@@ -139,7 +139,7 @@ class ImagesProjectAction(SourceAction):
             # Refresh project list and set current project and datasets if any
             src_input_data_sidebar_dataset_selector.set_workspace_id(g.WORKSPACE_ID)
             src_input_data_sidebar_dataset_selector.set_project_id(current_project)
-            src_input_data_sidebar_dataset_selector.set_dataset_ids(current_datasets)
+            src_input_data_sidebar_dataset_selector.set_dataset_ids(current_datasets or [])
 
         def _set_src_preview():
             src_preview_text = ""
