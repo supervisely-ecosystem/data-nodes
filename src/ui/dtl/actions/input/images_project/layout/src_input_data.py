@@ -33,6 +33,7 @@ def create_input_data_selector_widgets():
         workspace_is_selectable=False,
         append_to_body=False,
         show_select_all_datasets_checkbox=True,
+        width=300,
     )
 
     src_input_data_sidebar_save_btn = create_save_btn()
