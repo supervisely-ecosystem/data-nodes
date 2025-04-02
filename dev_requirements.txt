@@ -1,6 +1,6 @@
 git+https://github.com/supervisely/supervisely.git@optimize-index
 
-# supervisely==6.73.280
+# supervisely==6.73.339
 jsonschema==4.19.2
 networkx==3.1
 scikit-image==0.21.0
