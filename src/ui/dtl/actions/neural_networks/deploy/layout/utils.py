@@ -80,6 +80,7 @@ def save_model_settings(
     model_selector_stop_model_after_pipeline_checkbox: Checkbox,
     train_version: str = "v1",
 ):
+    model_params = {}
     # MODEL SELECTOR
     model_source = model_selector_sidebar_model_source_tabs.get_active_tab()
     if model_source == ModelSource.PRETRAINED:
