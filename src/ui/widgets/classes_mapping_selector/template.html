@@ -33,11 +33,11 @@
 
 			<td style="display: table-cell; vertical-align: middle; padding: 3px 20px">
 				<el-select v-model="state.{{{widget.widget_id}}}.classes_values[idx].value" placeholder="Select class"
-					size="mini" multiple="false" filterable="true" style="width: 160px"
+					size="mini" :multiple="false" :filterable="true" style="width: 160px"
 					:disabled="!state.{{{widget.widget_id}}}.classes_values[idx].selected">
 					<el-option
 						v-for="item in data.{{{widget.widget_id}}}.classes.filter(cls => cls.shape_text === obj_class.shape_text)"
-						:key="item.value" :label="item.title" :value="item.value">
+						:key="item.title" :label="item.title" :value="item.title">
 						<div style="display: flex; align-items: center;">
 							<i class="zmdi zmdi-circle" style="margin-right: 5px" :style="{color: item.color}"></i>
 							<b style="font-size: 13">{{item.title}}</b>
