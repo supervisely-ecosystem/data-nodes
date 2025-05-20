@@ -56,6 +56,9 @@ from .actions.annotation_transforms.rasterize.rasterize import RasterizeAction
 from .actions.annotation_transforms.rename_classes.rename_classes import (
     RenameClassesAction,
 )
+from .actions.annotation_transforms.merge_classes.merge_classes import (
+    MergeClassesAction,
+)
 from .actions.annotation_transforms.skeletonize.skeletonize import SkeletonizeAction
 from .actions.annotation_transforms.split_masks.split_masks import SplitMasksAction
 from .actions.annotation_transforms.split_videos_by_duration.split_videos_by_duration import (
@@ -122,6 +125,8 @@ from .actions.neural_networks.deploy.deploy import (
     DeployRTDETRv2Action,
     DeployYOLOV5Action,
     DeployYOLOV8Action,
+    DeployYOLOAction,
+    DeployDEIMAction,
 )
 from .actions.other.copy.copy import CopyAction
 from .actions.other.dataset.dataset import DatasetAction
@@ -231,6 +236,7 @@ image_actions_list = {
         PolygonToMaskAction.name,
         RasterizeAction.name,
         RenameClassesAction.name,
+        MergeClassesAction.name,
         SkeletonizeAction.name,
         SplitMasksAction.name,
         ImageTagAction.name,
@@ -245,10 +251,12 @@ image_actions_list = {
         ApplyNNInferenceAction.name,
         DeployYOLOV5Action.name,
         DeployYOLOV8Action.name,
+        DeployYOLOAction.name,
         DeployMMDetectionAction.name,
         DeployMMSegmentationAction.name,
         DeployRTDETRAction.name,
         DeployRTDETRv2Action.name,
+        DeployDEIMAction.name,
     ],
     OTHER: [
         DatasetAction.name,
@@ -317,6 +325,7 @@ image_actions_dict = {
     PolygonToMaskAction.name: PolygonToMaskAction,
     RasterizeAction.name: RasterizeAction,
     RenameClassesAction.name: RenameClassesAction,
+    MergeClassesAction.name: MergeClassesAction,
     SkeletonizeAction.name: SkeletonizeAction,
     SplitMasksAction.name: SplitMasksAction,
     ImageTagAction.name: ImageTagAction,
@@ -329,10 +338,12 @@ image_actions_dict = {
     ApplyNNInferenceAction.name: ApplyNNInferenceAction,
     DeployYOLOV5Action.name: DeployYOLOV5Action,
     DeployYOLOV8Action.name: DeployYOLOV8Action,
+    DeployYOLOAction.name: DeployYOLOAction,
     DeployMMDetectionAction.name: DeployMMDetectionAction,
     DeployMMSegmentationAction.name: DeployMMSegmentationAction,
     DeployRTDETRAction.name: DeployRTDETRAction,
     DeployRTDETRv2Action.name: DeployRTDETRv2Action,
+    DeployDEIMAction.name: DeployDEIMAction,
     # Other layers
     DatasetAction.name: DatasetAction,
     SplitDataAction.name: SplitDataAction,
