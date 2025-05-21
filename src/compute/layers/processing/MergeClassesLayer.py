@@ -39,6 +39,7 @@ class MergeClassesLayer(Layer):
 
         if curr_class in self.cls_mapping:
             new_class = self.cls_mapping[curr_class]
+            new_class = new_class.replace(ClassConstants.MERGE, "")
         else:
             raise BadSettingsError("Can not find mapping for class", extra={"class": curr_class})
 

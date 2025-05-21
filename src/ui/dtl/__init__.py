@@ -56,9 +56,7 @@ from .actions.annotation_transforms.rasterize.rasterize import RasterizeAction
 from .actions.annotation_transforms.rename_classes.rename_classes import (
     RenameClassesAction,
 )
-from .actions.annotation_transforms.merge_classes.merge_classes import (
-    MergeClassesAction,
-)
+from .actions.annotation_transforms.merge_classes.merge_classes import MergeClassesAction
 from .actions.annotation_transforms.skeletonize.skeletonize import SkeletonizeAction
 from .actions.annotation_transforms.split_masks.split_masks import SplitMasksAction
 from .actions.annotation_transforms.split_videos_by_duration.split_videos_by_duration import (
@@ -231,12 +229,12 @@ image_actions_list = {
         MaskToPolygonAction.name,
         LineToMaskAction.name,
         MergeMasksAction.name,
+        MergeClassesAction.name,
         ObjectsFilterAction.name,
         ObjectsFilterByAreaAction.name,
         PolygonToMaskAction.name,
         RasterizeAction.name,
         RenameClassesAction.name,
-        MergeClassesAction.name,
         SkeletonizeAction.name,
         SplitMasksAction.name,
         ImageTagAction.name,
@@ -320,12 +318,12 @@ image_actions_dict = {
     MaskToPolygonAction.name: MaskToPolygonAction,
     LineToMaskAction.name: LineToMaskAction,
     MergeMasksAction.name: MergeMasksAction,
+    MergeClassesAction.name: MergeClassesAction,
     ObjectsFilterAction.name: ObjectsFilterAction,
     ObjectsFilterByAreaAction.name: ObjectsFilterByAreaAction,
     PolygonToMaskAction.name: PolygonToMaskAction,
     RasterizeAction.name: RasterizeAction,
     RenameClassesAction.name: RenameClassesAction,
-    MergeClassesAction.name: MergeClassesAction,
     SkeletonizeAction.name: SkeletonizeAction,
     SplitMasksAction.name: SplitMasksAction,
     ImageTagAction.name: ImageTagAction,

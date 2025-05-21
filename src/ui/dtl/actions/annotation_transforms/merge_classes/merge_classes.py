@@ -28,7 +28,7 @@ class MergeClassesAction(AnnotationAction):
     legacy_name = "merge_classes"
     docs_url = None
     title = "Merge Classes"
-    description = "Merge existing classes"
+    description = "Merge existing classes into selected classes"
     md_description = get_layer_docs(dirname(realpath(__file__)))
 
     @classmethod
@@ -41,7 +41,12 @@ class MergeClassesAction(AnnotationAction):
         classes_mapping_widget_field = Field(
             content=classes_mapping_widget,
             title="Classes",
-            description="Select the classes you want to merge",
+            description=(
+                "Select source classes and target classes for merging. "
+                "Source classes will be merged into target classes. "
+                "Only classes with the same shape type can be merged, "
+                "e.g. bitmap -> bitmap, polygon -> polygon, rectangle -> rectangle, etc."
+            ),
         )
         classes_mapping_widgets_container = Container(
             widgets=[
@@ -56,7 +61,7 @@ class MergeClassesAction(AnnotationAction):
             ]
         )
         classes_mapping_edit_text = Text(
-            "Renamed classes: 0 / 0", status="text", font_size=get_text_font_size()
+            "Merged classes: 0 / 0", status="text", font_size=get_text_font_size()
         )
         classes_mapping_edit_btn = Button(
             text="EDIT",
@@ -90,7 +95,7 @@ class MergeClassesAction(AnnotationAction):
                 default_action="skip",
                 ignore_action="skip",
                 classes_mapping_preview_text=classes_mapping_edit_text,
-                classes_mapping_text_preview_title="Renamed classes",
+                classes_mapping_text_preview_title="Merged classes",
             )
 
         def _save_classes_mapping_setting():
@@ -104,8 +109,14 @@ class MergeClassesAction(AnnotationAction):
 
         def get_settings(options_json: dict) -> dict:
             """This function is used to get settings from options json we get from NodesFlow widget"""
+            from src.compute.classes_utils import ClassConstants
+            res_classes_mapping = {}
+            for src_class, dst_class in saved_classes_mapping_settings.items():
+                res_classes_mapping[src_class] = ClassConstants.MERGE + dst_class
+
+            # add merge class to settings
             return {
-                "classes_mapping": saved_classes_mapping_settings,
+                "classes_mapping": res_classes_mapping,
             }
 
         def data_changed_cb(**kwargs):

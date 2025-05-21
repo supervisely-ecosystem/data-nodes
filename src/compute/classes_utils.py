@@ -8,4 +8,5 @@ class ClassConstants:
     UPDATE = "__update__"
     NEW = "__new__"
     CLONE = "__clone__"
+    MERGE = "__merge__"
     SHAPES = ['bitmap', 'polygon', 'rectangle', 'line', 'point']
