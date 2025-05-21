@@ -5,10 +5,7 @@
 	{{{widget.empty_notification}}}
 </div>
 <div v-show="data.{{{widget.widget_id}}}.classes.length != 0">
-	<link
-		rel="stylesheet"
-		href="./sly/css/app/widgets/object_class_view/style.css"
-	/>
+	<link rel="stylesheet" href="./sly/css/app/widgets/object_class_view/style.css" />
 	<table class="classes-color-mapping-table">
 		<tr>
 			<th style="padding: 3px; width: 41px">
@@ -23,50 +20,33 @@
 		</tr>
 		<tr v-for="(obj_class, idx) in data.{{{widget.widget_id}}}.classes">
 			<td>
-				<el-checkbox
-					v-model="state.{{{widget.widget_id}}}.classes_values[idx].selected"
-				>
+				<el-checkbox v-model="state.{{{widget.widget_id}}}.classes_values[idx].selected">
 				</el-checkbox>
 			</td>
-			<td
-				class="icon-text-line classes-color-mapping-table-td-class-title"
-				style="display: table-cell; vertical-align: middle; padding: 3px 0px"
-			>
+			<td class="icon-text-line classes-color-mapping-table-td-class-title"
+				style="display: table-cell; vertical-align: middle; padding: 3px 0px">
 				<div class="fflex classes-color-mapping-table-td-title-wrapper">
-					<i
-						class="zmdi zmdi-circle"
-						style="margin-right: 5px"
-						:style="{color: obj_class.color}"
-					></i>
+					<i class="zmdi zmdi-circle" style="margin-right: 5px" :style="{color: obj_class.color}"></i>
 
 					<b style="font-size: 16">{{obj_class.title}}</b>
-					<span
-						style="
+					<span style="
 							flex: none;
 							margin-left: 5px;
 							font-size: 12px;
 							color: #8492a6;
 							line-height: initial;
-						"
-					>
+						">
 						{{obj_class.shape_text}}
 					</span>
 				</div>
 			</td>
-			<td
-				class="classes-color-mapping-table-td-class-color"
-				style="display: table-cell; vertical-align: middle"
-			>
+
+			<td class="classes-color-mapping-table-td-class-color" style="display: table-cell; vertical-align: middle">
 				<div class="color-picker-compact">
 					<script></script>
-					<el-color-picker
-						v-model="state.{{{widget.widget_id}}}.classes_values[idx].value"
-						:disabled="!state.{{{widget.widget_id}}}.classes_values[idx].selected"
-						{%
-						if
-						widget._greyscale
-						%}
-						@change="() => {
+					<el-color-picker v-model="state.{{{widget.widget_id}}}.classes_values[idx].value"
+						:disabled="!state.{{{widget.widget_id}}}.classes_values[idx].selected" {% if widget._greyscale
+						%} @change="() => {
 							function hexToRgb(hex) {
 								var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 								hex = hex.replace(shorthandRegex, function(m, r, g, b) {
@@ -93,15 +73,7 @@
 							const greyHex = rgbToHex(grey, grey, grey);
 							state.{{{widget.widget_id}}}.classes_values[idx].value = greyHex;
 							state.{{{widget.widget_id}}}.classes_values[idx].selected = true;
-						}"
-						{%
-						else
-						%}
-						@change="state.{{{widget.widget_id}}}.classes_values[idx].selected = true"
-						{%
-						endif
-						%}
-					>
+						}" {% else %} @change="state.{{{widget.widget_id}}}.classes_values[idx].selected = true" {% endif %}>
 					</el-color-picker>
 				</div>
 			</td>

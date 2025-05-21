@@ -25,25 +25,14 @@ from supervisely.nn.artifacts import YOLOv5v2, YOLOv8, MMDetection3, MMSegmentat
 
 from src.ui.dtl.actions.neural_networks.deploy.layout.pretrained_models import (
     yolov5 as pretrained_yolov5,
-)
-from src.ui.dtl.actions.neural_networks.deploy.layout.pretrained_models import (
     yolov8 as pretrained_yolov8,
-)
-from src.ui.dtl.actions.neural_networks.deploy.layout.pretrained_models import (
     mmdetection3 as pretrained_mmdetection3,
-)
-from src.ui.dtl.actions.neural_networks.deploy.layout.pretrained_models import (
     mmsegmentation as pretrained_mmsegmentation,
-)
-
-from src.ui.dtl.actions.neural_networks.deploy.layout.pretrained_models import (
     rtdetr as pretrained_rtdetr,
-)
-
-from src.ui.dtl.actions.neural_networks.deploy.layout.pretrained_models import (
     rtdetrv2 as pretrained_rtdetrv2,
+    yolo as pretrained_yolo,
+    deim as pretrained_deim,
 )
-
 
 class DeployBaseAction(DeployNNAction):
     name = "deploy_base"
@@ -369,8 +358,8 @@ class DeployYOLOV5Action(DeployBaseAction):
 
 class DeployYOLOV8Action(DeployBaseAction):
     name = "deploy_yolo_v8"
-    title = "Deploy YOLO v8 | v9 | v10 | v11"
-    description = "Deploy YOLO v8 | v9 | v10 | v11 models."
+    title = "Deploy YOLO v8 - v11"
+    description = "Deploy YOLO v8 - v11 models."
     md_description = DeployBaseAction.read_md_file(dirname(realpath(__file__)) + "/yolov8.md")
     need_runtime_selector = True
     train_version = "v1"
@@ -382,6 +371,20 @@ class DeployYOLOV8Action(DeployBaseAction):
     artifacts = YOLOv8(g.TEAM_ID)
     pretrained_models = pretrained_yolov8
 
+class DeployYOLOAction(DeployBaseAction):
+    name = "deploy_yolo"
+    title = "Deploy YOLO v8 - v12"
+    description = "Deploy YOLO v8 - v12 models."
+    md_description = DeployBaseAction.read_md_file(dirname(realpath(__file__)) + "/yolo.md")
+    train_version = "v2"
+
+    # Framework settings
+    framework = "yolo"
+    framework_name = "YOLO"
+    slug = "supervisely-ecosystem/yolo/supervisely_integration/serve"
+    artifacts = None
+    pretrained_models = pretrained_yolo
+    need_runtime_selector = True
 
 class DeployMMDetectionAction(DeployBaseAction):
     name = "deploy_mmdetection"
@@ -430,7 +433,6 @@ class DeployRTDETRAction(DeployBaseAction):
     pretrained_models = pretrained_rtdetr
     need_runtime_selector = True
 
-
 class DeployRTDETRv2Action(DeployBaseAction):
     name = "deploy_rtdetrv2"
     title = "Deploy RT-DETRv2"
@@ -445,3 +447,19 @@ class DeployRTDETRv2Action(DeployBaseAction):
     artifacts = None
     pretrained_models = pretrained_rtdetrv2
     need_runtime_selector = True
+
+class DeployDEIMAction(DeployBaseAction):
+    name = "deploy_deim"
+    title = "Deploy DEIM"
+    description = "Deploy DEIM models."
+    md_description = DeployBaseAction.read_md_file(dirname(realpath(__file__)) + "/deim.md")
+    train_version = "v2"
+
+    # Framework settings
+    framework = "deim"
+    framework_name = "DEIM"
+    slug = "supervisely-ecosystem/deim/supervisely_integration/serve"
+    artifacts = None
+    pretrained_models = pretrained_deim
+    need_runtime_selector = True
+

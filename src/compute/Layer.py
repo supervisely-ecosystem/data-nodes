@@ -315,6 +315,17 @@ class Layer:
                 elif dst_class == ClassConstants.IGNORE:
                     res_meta = res_meta.delete_obj_class(src_class_title)
 
+                # smth -> merge
+                elif type(dst_class) is str and dst_class.startswith(ClassConstants.MERGE):
+                    obj_cls = res_meta.get_obj_class(src_class_title)
+                    if obj_cls is None:
+                        logger.debug(
+                            "Class not found in input meta",
+                            extra={"class_name": src_class_title, "dst_class": dst_class},
+                        )
+                    else:
+                        res_meta = res_meta.delete_obj_class(src_class_title)
+
                 # smth -> new name
                 elif type(dst_class) is str:
                     obj_cls = res_meta.get_obj_class(src_class_title)

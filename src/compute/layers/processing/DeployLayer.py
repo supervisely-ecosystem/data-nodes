@@ -266,3 +266,69 @@ class DeployRTDETRv2Layer(DeployLayer):
             },
         },
     }
+
+class DeployDEIMLayer(DeployLayer):
+    action = "deploy_deim"
+    title = "Deploy DEIM"
+
+    layer_settings = {
+        "required": ["settings"],
+        "properties": {
+            "settings": {
+                "type": "object",
+                "required": [
+                    "session_id",
+                    "agent_id",
+                    "device",
+                    "model_source",
+                    "model_params",
+                    "stop_model_session",
+                ],
+                "properties": {
+                    "session_id": {"type": "integer"},
+                    "agent_id": {"type": "integer"},
+                    "device": {"type": "string"},
+                    "model_source": {"type": "string"},
+                    "task_type": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+                    "checkpoint_name": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+                    "checkpoint_url": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+                    "runtime": {"type": "string"},
+                    "model_params": {"type": "object"},
+                    "stop_model_session": {"type": "boolean"},
+                },
+            },
+        },
+    }
+
+class DeployYOLOLayer(DeployLayer):
+    action = "deploy_yolo"
+    title = "Deploy YOLO"
+
+    layer_settings = {
+        "required": ["settings"],
+        "properties": {
+            "settings": {
+                "type": "object",
+                "required": [
+                    "session_id",
+                    "agent_id",
+                    "device",
+                    "model_source",
+                    "model_params",
+                    "stop_model_session",
+                ],
+                "properties": {
+                    "session_id": {"type": "integer"},
+                    "agent_id": {"type": "integer"},
+                    "device": {"type": "string"},
+                    "model_source": {"type": "string"},
+                    "task_type": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+                    "checkpoint_name": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+                    "checkpoint_url": {"oneOf": [{"type": "string"}, {"type": "null"}]},
+                    "runtime": {"type": "string"},
+                    "model_params": {"type": "object"},
+                    "stop_model_session": {"type": "boolean"},
+                },
+            },
+        },
+    }

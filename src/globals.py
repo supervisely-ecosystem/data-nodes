@@ -19,7 +19,8 @@ from supervisely.app.widgets import (
 
 if sly.is_development():
     load_dotenv("local.env")
-    load_dotenv(os.path.expanduser("~/supervisely.env"))
+    load_dotenv("supervisely.env")
+    # load_dotenv(os.path.expanduser("~/supervisely.env"))
 
 api: sly.Api = sly.Api()
 

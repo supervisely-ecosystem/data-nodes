@@ -3,7 +3,7 @@
 	"configurations": [
 		{
 			"name": "Uvicorn",
-			"type": "python",
+			"type": "debugpy",
 			"request": "launch",
 			"module": "uvicorn",
 			"args": [
@@ -14,8 +14,8 @@
 				"8000",
 				"--ws",
 				"websockets",
-				"--reload"
 			],
+			"sudo": true,
 			"jinja": true,
 			"justMyCode": false,
 			"env": {
@@ -25,7 +25,7 @@
 		},
 		{
 			"name": "Python: Current File",
-			"type": "python",
+			"type": "debugpy",
 			"request": "launch",
 			"program": "${file}",
 			"console": "integratedTerminal",
@@ -36,7 +36,7 @@
 		},
 		{
 			"name": "Advanced Debug in Supervisely platform",
-			"type": "python",
+			"type": "debugpy",
 			"request": "launch",
 			"module": "uvicorn",
 			"args": [
