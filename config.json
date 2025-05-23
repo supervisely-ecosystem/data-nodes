@@ -4,6 +4,14 @@
 	"description": "[Beta] Drag and drop interface for building custom DataOps pipelines",
 	"entrypoint": "python -m uvicorn src.main:app --host 0.0.0.0 --port 8000",
 	"headless": false,
+	"categories": [
+		"nn tools",
+		"augmentation",
+		"data operations",
+		"images",
+		"videos",
+		"annotation transformation",
+	],
 	"docker_image": "supervisely/data-nodes:1.0.32",
 	"modal_template": "src/modal.html",
 	"modal_template_state": {
