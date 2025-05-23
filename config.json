@@ -10,7 +10,7 @@
 		"data operations",
 		"images",
 		"videos",
-		"annotation transformation",
+		"annotation transformation"
 	],
 	"docker_image": "supervisely/data-nodes:1.0.32",
 	"modal_template": "src/modal.html",
