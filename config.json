@@ -1,7 +1,7 @@
 {
 	"version": "2.0.0",
 	"name": "ML Pipelines",
-	"description": "[Beta] Drag and drop interface for building custom DataOps pipelines",
+	"description": "Drag and drop interface for building custom DataOps pipelines",
 	"entrypoint": "python -m uvicorn src.main:app --host 0.0.0.0 --port 8000",
 	"headless": false,
 	"categories": [
