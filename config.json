@@ -1,35 +1,35 @@
 {
-	"version": "2.0.0",
-	"name": "ML Pipelines",
-	"description": "Drag and drop interface for building custom DataOps pipelines",
-	"entrypoint": "python -m uvicorn src.main:app --host 0.0.0.0 --port 8000",
-	"headless": false,
-	"categories": [
-		"nn tools",
-		"augmentation",
-		"data operations",
-		"images",
-		"videos",
-		"annotation transformation"
-	],
-	"docker_image": "supervisely/data-nodes:1.0.32",
-	"modal_template": "src/modal.html",
-	"modal_template_state": {
-		"modalityType": "images"
-	},
-	"min_agent_version": "6.7.36",
-	"icon_cover": true,
-	"icon": "https://github.com/user-attachments/assets/255d8b0f-16f6-44f4-a931-8b809bd43a3e",
-	"poster": "https://github.com/user-attachments/assets/58d6d5d7-3c05-4c56-9661-90d0a76747aa",
-	"context_menu": {
-		"target": [
-			"ecosystem",
-			"images_project",
-			"images_dataset",
-			"videos_project",
-			"videos_dataset",
-			"files_file"
-		]
-	},
-	"instance_version": "6.12.44"
+  "version": "2.0.0",
+  "name": "ML Pipelines",
+  "description": "Drag and drop interface for building custom DataOps pipelines",
+  "entrypoint": "python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --ws-ping-interval 30 --ws-ping-timeout 120",
+  "headless": false,
+  "categories": [
+    "nn tools",
+    "augmentation",
+    "data operations",
+    "images",
+    "videos",
+    "annotation transformation"
+  ],
+  "docker_image": "supervisely/data-nodes:1.0.32",
+  "modal_template": "src/modal.html",
+  "modal_template_state": {
+    "modalityType": "images"
+  },
+  "min_agent_version": "6.7.36",
+  "icon_cover": true,
+  "icon": "https://github.com/user-attachments/assets/255d8b0f-16f6-44f4-a931-8b809bd43a3e",
+  "poster": "https://github.com/user-attachments/assets/58d6d5d7-3c05-4c56-9661-90d0a76747aa",
+  "context_menu": {
+    "target": [
+      "ecosystem",
+      "images_project",
+      "images_dataset",
+      "videos_project",
+      "videos_dataset",
+      "files_file"
+    ]
+  },
+  "instance_version": "6.12.44"
 }

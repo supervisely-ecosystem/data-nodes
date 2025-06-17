@@ -3,9 +3,8 @@ import os
 from distutils.util import strtobool
 from queue import Queue
 
-from dotenv import load_dotenv
-
 import supervisely as sly
+from dotenv import load_dotenv
 from supervisely.app.widgets import (
     Button,
     Checkbox,
@@ -19,8 +18,7 @@ from supervisely.app.widgets import (
 
 if sly.is_development():
     load_dotenv("local.env")
-    load_dotenv("supervisely.env")
-    # load_dotenv(os.path.expanduser("~/supervisely.env"))
+    load_dotenv(os.path.expanduser("~/supervisely.env"))
 
 api: sly.Api = sly.Api()
 
