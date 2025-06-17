@@ -14,6 +14,10 @@
 				"8000",
 				"--ws",
 				"websockets",
+				"--ws-ping-interval",
+				"30",
+				"--ws-ping-timeout",
+				"120"
 			],
 			"sudo": true,
 			"jinja": true,
