@@ -8,11 +8,11 @@ from supervisely.app.widgets import (
     Container,
     Editor,
     Input,
+    InputNumber,
     ModelInfo,
     NotificationBox,
     Select,
     SelectAppSession,
-    Slider,
     Text,
 )
 from supervisely.nn.inference.session import Session, SessionJSON
@@ -250,9 +250,9 @@ def set_model_apply_method_from_json(settings: dict, apply_nn_methods_selector: 
     apply_nn_methods_selector.set_value(apply_method)
 
 
-def set_batch_size_from_json(settings: dict, batch_size_slider: Slider) -> None:
+def set_batch_size_from_json(settings: dict, batch_size_input: InputNumber) -> None:
     batch_size = settings.get("batch_size", 50)
-    batch_size_slider.set_value(batch_size)
+    batch_size_input.set_value(batch_size)
 
 
 ### -----------------------------
@@ -271,7 +271,7 @@ def set_model_settings_preview(
     ignore_labeled_checkbox: CheckboxField,
     resolve_conflict_method_selector: Select,
     apply_nn_methods_selector: Select,
-    batch_size_slider: Slider,
+    batch_size_input: InputNumber,
     suffix_preview: Text,
     use_suffix_preview: Text,
     conflict_method_preview: Text,
@@ -284,7 +284,7 @@ def set_model_settings_preview(
     ignore_labeled = ignore_labeled_checkbox.is_checked()
     model_conflict = resolve_conflict_method_selector.get_label()
     apply_method = apply_nn_methods_selector.get_label()
-    batch_size = batch_size_slider.get_value()
+    batch_size = batch_size_input.get_value()
 
     suffix_preview.set(f"Suffix: {model_suffix}", "text")
     use_suffix_preview.set(f"Always use suffix: {str(model_use_suffix)}", "text")
@@ -325,7 +325,7 @@ def reset_model(
     conflict_method_preview: Text,
     ignore_labeled_preview: Text,
     apply_method_preview: Text,
-    batch_size_preview: Slider,
+    batch_size_preview: Text,
     connect_notification: NotificationBox,
     update_preview_btn: Button,
     model_separator: Text,

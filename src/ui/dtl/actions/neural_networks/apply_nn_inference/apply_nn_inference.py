@@ -91,7 +91,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
             resolve_conflict_method_selector,
             inf_settings_editor,
             apply_nn_methods_selector,
-            batch_size_slider,
+            batch_size_input,
             inf_settings_save_btn,
             inf_settings_set_default_btn,
             suffix_preview,
@@ -229,7 +229,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
                 ignore_labeled_checkbox,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
-                batch_size_slider,
+                batch_size_input,
                 suffix_preview,
                 use_suffix_preview,
                 conflict_method_preview,
@@ -479,7 +479,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
 
             session_id = connect_nn_model_info._session_id
             apply_method = apply_nn_methods_selector.get_value()
-            batch_size = batch_size_slider.get_value()
+            batch_size = batch_size_input.get_value()
             model_suffix = model_suffix_input.get_value()
             use_model_suffix = always_add_suffix_checkbox.is_checked()
             ignore_labeled = ignore_labeled_checkbox.is_checked()
@@ -571,14 +571,14 @@ class ApplyNNInferenceAction(ApplyNNAction):
             set_model_conflict_from_json(settings, resolve_conflict_method_selector)
             _model_settings = set_model_settings_from_json(settings, inf_settings_editor)
             set_model_apply_method_from_json(settings, apply_nn_methods_selector)
-            set_batch_size_from_json(settings, batch_size_slider)
+            set_batch_size_from_json(settings, batch_size_input)
             set_model_settings_preview(
                 model_suffix_input,
                 always_add_suffix_checkbox,
                 ignore_labeled_checkbox,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
-                batch_size_slider,
+                batch_size_input,
                 suffix_preview,
                 use_suffix_preview,
                 conflict_method_preview,
@@ -649,7 +649,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
                 ignore_labeled_checkbox,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
-                batch_size_slider,
+                batch_size_input,
                 suffix_preview,
                 use_suffix_preview,
                 conflict_method_preview,
