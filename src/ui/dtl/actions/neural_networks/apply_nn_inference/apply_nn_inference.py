@@ -193,7 +193,6 @@ class ApplyNNInferenceAction(ApplyNNAction):
 
             set_model_preview(_model_info, connect_nn_model_preview)
             set_model_settings(_model_settings, inf_settings_editor)
-            # set batch size here
             connect_nn_model_preview.show()
 
             classes_separator.show()
