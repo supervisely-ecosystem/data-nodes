@@ -1,8 +1,5 @@
 from typing import List
 
-import src.globals as g
-from src.ui.dtl.utils import set_classes_list_preview, set_tags_list_preview
-from src.ui.widgets import ClassesList, ClassesListPreview, TagsList, TagsListPreview
 from supervisely import ObjClass, ProjectMeta, TagMeta
 from supervisely.app.widgets import (
     Button,
@@ -15,10 +12,14 @@ from supervisely.app.widgets import (
     NotificationBox,
     Select,
     SelectAppSession,
+    Slider,
     Text,
-    Slider
 )
 from supervisely.nn.inference.session import Session, SessionJSON
+
+import src.globals as g
+from src.ui.dtl.utils import set_classes_list_preview, set_tags_list_preview
+from src.ui.widgets import ClassesList, ClassesListPreview, TagsList, TagsListPreview
 
 
 ### CONNECT MODEL AND MODEL INFO
@@ -248,6 +249,7 @@ def set_model_apply_method_from_json(settings: dict, apply_nn_methods_selector: 
     apply_method = settings.get("type", "image")
     apply_nn_methods_selector.set_value(apply_method)
 
+
 def set_batch_size_from_json(settings: dict, batch_size_slider: Slider) -> None:
     batch_size = settings.get("batch_size", 50)
     batch_size_slider.set_value(batch_size)
@@ -323,6 +325,7 @@ def reset_model(
     conflict_method_preview: Text,
     ignore_labeled_preview: Text,
     apply_method_preview: Text,
+    batch_size_preview: Slider,
     connect_notification: NotificationBox,
     update_preview_btn: Button,
     model_separator: Text,
@@ -371,6 +374,7 @@ def reset_model(
     conflict_method_preview.hide()
     ignore_labeled_preview.hide()
     apply_method_preview.hide()
+    batch_size_preview.hide()
     model_separator.hide()
 
     # reset layout

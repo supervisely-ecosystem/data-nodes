@@ -2,6 +2,9 @@ import copy
 from os.path import dirname, realpath
 from typing import Optional
 
+from supervisely import ProjectMeta
+from supervisely.app.widgets import NodesFlow
+
 import src.globals as g
 from src.ui.dtl.Action import ApplyNNAction
 from src.ui.dtl.actions.neural_networks.apply_nn_inference.layout.connect_model import (
@@ -30,8 +33,6 @@ from src.ui.dtl.utils import (
     set_classes_list_settings_from_json,
     set_tags_list_settings_from_json,
 )
-from supervisely import ProjectMeta
-from supervisely.app.widgets import NodesFlow
 
 
 class ApplyNNInferenceAction(ApplyNNAction):
@@ -234,7 +235,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
                 conflict_method_preview,
                 ignore_labeled_preview,
                 apply_method_preview,
-                batch_size_preview
+                batch_size_preview,
             )
 
             show_node_gui(
@@ -312,6 +313,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
                 conflict_method_preview,
                 ignore_labeled_preview,
                 apply_method_preview,
+                batch_size_preview,
                 connect_notification,
                 update_preview_btn,
                 model_separator,
