@@ -11,6 +11,7 @@ from supervisely.app.widgets import (
 )
 from supervisely.nn.inference import RuntimeType
 from supervisely.nn.utils import ModelSource
+from supervisely.nn.task_type import TaskType
 import src.globals as g
 from src.ui.dtl.utils import (
     get_text_font_size,
@@ -41,8 +42,8 @@ def create_model_selector_widgets(
     pretrained_model_selector_task_types = (
         model_selector_sidebar_public_model_table.get_available_task_types()
     )
-    if "object detection" in pretrained_model_selector_task_types:
-        model_selector_sidebar_public_model_table.set_active_task_type("object detection")
+    if TaskType.OBJECT_DETECTION in pretrained_model_selector_task_types:
+        model_selector_sidebar_public_model_table.set_active_task_type(TaskType.OBJECT_DETECTION)
 
     # runtime selector
     model_selector_runtime_selector_sidebar = Select(
@@ -66,7 +67,7 @@ def create_model_selector_widgets(
         ],
     )
     if len(custom_models) == 0:
-        model_selector_sidebar_model_source_tabs.set_active_tab("Pretrained public models")
+        model_selector_sidebar_model_source_tabs.set_active_tab(ModelSource.PRETRAINED)
 
     # SIDEBAR CONTAINER
     model_selector_sidebar_save_btn = create_save_btn()

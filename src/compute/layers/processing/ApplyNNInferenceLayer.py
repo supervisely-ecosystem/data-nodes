@@ -231,7 +231,7 @@ def apply_model_to_images(
     pred_anns = []
     try:
         for paths_batch in batched(image_paths, batch_size):
-            predictions = session.inference_image_paths(image_paths)
+            predictions = session.inference_image_paths(paths_batch)
             for pred_ann in predictions:
                 pred_ann, res_meta = postprocess_ann(pred_ann, output_meta, model_meta, settings)
                 pred_anns.append(pred_ann)
