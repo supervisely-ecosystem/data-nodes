@@ -26,7 +26,7 @@ def create_input_data_selector_widgets():
         multiselect=True,
         flat=True,
         select_all_datasets=False,
-        allowed_project_types=[ProjectType.IMAGES],
+        allowed_project_types=[ProjectType.IMAGES.value],
         always_open=False,
         compact=False,
         team_is_selectable=False,
