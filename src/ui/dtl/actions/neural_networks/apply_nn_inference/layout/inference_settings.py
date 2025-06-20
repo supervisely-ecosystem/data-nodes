@@ -1,10 +1,3 @@
-from src.ui.dtl.utils import (
-    create_save_btn,
-    create_set_default_btn,
-    get_set_settings_button_style,
-    get_set_settings_container,
-    get_text_font_size,
-)
 from supervisely.app.widgets import (
     Button,
     Checkbox,
@@ -14,8 +7,17 @@ from supervisely.app.widgets import (
     Field,
     Flexbox,
     Input,
+    InputNumber,
     Select,
     Text,
+)
+
+from src.ui.dtl.utils import (
+    create_save_btn,
+    create_set_default_btn,
+    get_set_settings_button_style,
+    get_set_settings_container,
+    get_text_font_size,
 )
 
 
@@ -84,7 +86,12 @@ def create_inference_settings_widgets():
         description="Select how you want to apply the model: to the images, to the ROI defined by object BBox or by using sliding window approach",
         content=apply_nn_methods_selector,
     )
-
+    batch_size_input = InputNumber(value=50, min=1, max=50, step=1)
+    batch_size_field = Field(
+        title="Batch Size",
+        description="Images per batch — higher values use more VRAM",
+        content=batch_size_input,
+    )
     inf_settings_widgets_container = Container(
         widgets=[
             model_suffix_field,
@@ -92,6 +99,7 @@ def create_inference_settings_widgets():
             resolve_conflict_method_field,
             inf_settings_editor_field,
             apply_nn_methods_field,
+            batch_size_field,
             Flexbox(
                 widgets=[
                     inf_settings_save_btn,
@@ -114,12 +122,14 @@ def create_inference_settings_widgets():
         "Skip already labeled images: ", "text", font_size=get_text_font_size()
     )
     apply_method_preview = Text("Apply method: ", "text", font_size=get_text_font_size())
+    batch_size_preview = Text("Batch size: ", "text", font_size=get_text_font_size())
 
     suffix_preview.hide()
     use_suffix_preview.hide()
     conflict_method_preview.hide()
     ignore_labeled_preview.hide()
     apply_method_preview.hide()
+    batch_size_preview.hide()
 
     inf_settings_preview_container = Container(
         [
@@ -128,6 +138,7 @@ def create_inference_settings_widgets():
             conflict_method_preview,
             ignore_labeled_preview,
             apply_method_preview,
+            batch_size_preview,
         ]
     )
 
@@ -156,6 +167,7 @@ def create_inference_settings_widgets():
         resolve_conflict_method_selector,
         inf_settings_editor,
         apply_nn_methods_selector,
+        batch_size_input,
         inf_settings_save_btn,
         inf_settings_set_default_btn,
         suffix_preview,
@@ -163,6 +175,7 @@ def create_inference_settings_widgets():
         conflict_method_preview,
         ignore_labeled_preview,
         apply_method_preview,
+        batch_size_preview,
         inf_settings_edit_text,
         inf_settings_edit_container,
         inf_settings_widgets_container,

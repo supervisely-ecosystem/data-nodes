@@ -2,6 +2,9 @@ import copy
 from os.path import dirname, realpath
 from typing import Optional
 
+from supervisely import ProjectMeta
+from supervisely.app.widgets import NodesFlow
+
 import src.globals as g
 from src.ui.dtl.Action import ApplyNNAction
 from src.ui.dtl.actions.neural_networks.apply_nn_inference.layout.connect_model import (
@@ -30,8 +33,6 @@ from src.ui.dtl.utils import (
     set_classes_list_settings_from_json,
     set_tags_list_settings_from_json,
 )
-from supervisely import ProjectMeta
-from supervisely.app.widgets import NodesFlow
 
 
 class ApplyNNInferenceAction(ApplyNNAction):
@@ -90,6 +91,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
             resolve_conflict_method_selector,
             inf_settings_editor,
             apply_nn_methods_selector,
+            batch_size_input,
             inf_settings_save_btn,
             inf_settings_set_default_btn,
             suffix_preview,
@@ -97,6 +99,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
             conflict_method_preview,
             ignore_labeled_preview,
             apply_method_preview,
+            batch_size_preview,
             inf_settings_edit_text,
             inf_settings_edit_container,
             inf_settings_widgets_container,
@@ -226,11 +229,13 @@ class ApplyNNInferenceAction(ApplyNNAction):
                 ignore_labeled_checkbox,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
+                batch_size_input,
                 suffix_preview,
                 use_suffix_preview,
                 conflict_method_preview,
                 ignore_labeled_preview,
                 apply_method_preview,
+                batch_size_preview,
             )
 
             show_node_gui(
@@ -308,6 +313,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
                 conflict_method_preview,
                 ignore_labeled_preview,
                 apply_method_preview,
+                batch_size_preview,
                 connect_notification,
                 update_preview_btn,
                 model_separator,
@@ -473,6 +479,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
 
             session_id = connect_nn_model_info._session_id
             apply_method = apply_nn_methods_selector.get_value()
+            batch_size = batch_size_input.get_value()
             model_suffix = model_suffix_input.get_value()
             use_model_suffix = always_add_suffix_checkbox.is_checked()
             ignore_labeled = ignore_labeled_checkbox.is_checked()
@@ -490,6 +497,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
                 "use_model_suffix": use_model_suffix,
                 "ignore_labeled": ignore_labeled,
                 "apply_method": apply_method,
+                "batch_size": batch_size,
                 "classes": saved_classes_settings,
                 "tags": saved_tags_settings,
             }
@@ -563,17 +571,20 @@ class ApplyNNInferenceAction(ApplyNNAction):
             set_model_conflict_from_json(settings, resolve_conflict_method_selector)
             _model_settings = set_model_settings_from_json(settings, inf_settings_editor)
             set_model_apply_method_from_json(settings, apply_nn_methods_selector)
+            set_batch_size_from_json(settings, batch_size_input)
             set_model_settings_preview(
                 model_suffix_input,
                 always_add_suffix_checkbox,
                 ignore_labeled_checkbox,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
+                batch_size_input,
                 suffix_preview,
                 use_suffix_preview,
                 conflict_method_preview,
                 ignore_labeled_preview,
                 apply_method_preview,
+                batch_size_preview,
             )
             # -----------------------
             update_preview_btn.enable()
@@ -638,11 +649,13 @@ class ApplyNNInferenceAction(ApplyNNAction):
                 ignore_labeled_checkbox,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
+                batch_size_input,
                 suffix_preview,
                 use_suffix_preview,
                 conflict_method_preview,
                 ignore_labeled_preview,
                 apply_method_preview,
+                batch_size_preview,
             )
             g.updater("metas")
 

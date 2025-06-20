@@ -1,22 +1,23 @@
-import src.globals as g
-from src.ui.dtl.utils import (
-    create_save_btn,
-    create_refresh_projects_btn,
-    get_text_font_size,
-    get_set_settings_button_style,
-    get_set_settings_container,
-)
 from supervisely import ProjectType
 from supervisely.app.content import StateJson
 from supervisely.app.widgets import (
     Button,
     Container,
-    NotificationBox,
+    DatasetThumbnail,
     Flexbox,
+    NotificationBox,
+    ProjectThumbnail,
     SelectDatasetTree,
     Text,
-    ProjectThumbnail,
-    DatasetThumbnail,
+)
+
+import src.globals as g
+from src.ui.dtl.utils import (
+    create_refresh_projects_btn,
+    create_save_btn,
+    get_set_settings_button_style,
+    get_set_settings_container,
+    get_text_font_size,
 )
 
 

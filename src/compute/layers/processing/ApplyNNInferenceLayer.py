@@ -17,6 +17,7 @@ from supervisely.app import show_dialog
 from supervisely.collection.key_indexed_collection import KeyIndexedCollection
 from supervisely.io.fs import file_exists, silent_remove
 from supervisely.nn.inference import Session
+from supervisely._utils import batched
 
 # from src.ui.tabs.run import error_notification
 
@@ -225,13 +226,15 @@ def apply_model_to_images(
     model_meta: ProjectMeta,
     output_meta: ProjectMeta,
     settings: dict,
+    batch_size: int = 50,
 ):
     pred_anns = []
     try:
-        predictions = session.inference_image_paths(image_paths)
-        for pred_ann in predictions:
-            pred_ann, res_meta = postprocess_ann(pred_ann, output_meta, model_meta, settings)
-            pred_anns.append(pred_ann)
+        for paths_batch in batched(image_paths, batch_size):
+            predictions = session.inference_image_paths(paths_batch)
+            for pred_ann in predictions:
+                pred_ann, res_meta = postprocess_ann(pred_ann, output_meta, model_meta, settings)
+                pred_anns.append(pred_ann)
     except:
         # FIX FOR BATCH
         sly_logger.warn(
@@ -262,6 +265,7 @@ class ApplyNNInferenceLayer(Layer):
                     "use_model_suffix",
                     "add_pred_ann_method",
                     "apply_method",
+                    "batch_size",
                     "classes",
                     "tags",
                 ],
@@ -279,6 +283,7 @@ class ApplyNNInferenceLayer(Layer):
                         "enum": ["merge", "replace", "replace_keep_img_tags"],
                     },
                     "apply_method": {"type": "string", "enum": ["image", "roi", "sliding_window"]},
+                    "batch_size": {"type": "integer"},
                     "classes": {
                         "oneOf": [
                             {"type": "string"},
@@ -483,6 +488,7 @@ class ApplyNNInferenceLayer(Layer):
             session_id = self.settings["session_id"]
             model_meta = ProjectMeta().from_json(self.settings["model_meta"])
             apply_method = self.settings["apply_method"]
+            batch_size = self.settings["batch_size"]
             if apply_method == "image":
                 item_shapes = []
                 item_paths = []
@@ -512,6 +518,7 @@ class ApplyNNInferenceLayer(Layer):
                         model_meta,
                         self.output_meta,
                         self.settings,
+                        batch_size=batch_size,
                     )
                 except:
                     if not self.net.preview_mode:
@@ -535,6 +542,7 @@ class ApplyNNInferenceLayer(Layer):
                                 model_meta,
                                 self.output_meta,
                                 self.settings,
+                                batch_size=batch_size,
                             )
                         except:
                             g.api.app.stop(session_id)
