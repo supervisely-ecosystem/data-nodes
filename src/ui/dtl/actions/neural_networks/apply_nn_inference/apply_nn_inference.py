@@ -86,7 +86,8 @@ class ApplyNNInferenceAction(ApplyNNAction):
 
         (
             model_suffix_input,
-            always_add_suffix_checkbox,
+            add_suffix_method_selector,
+            add_suffix_method_field,
             ignore_labeled_checkbox,
             resolve_conflict_method_selector,
             inf_settings_editor,
@@ -225,7 +226,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
             inf_settings_edit_text.show()
             set_model_settings_preview(
                 model_suffix_input,
-                always_add_suffix_checkbox,
+                add_suffix_method_selector,
                 ignore_labeled_checkbox,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
@@ -481,7 +482,8 @@ class ApplyNNInferenceAction(ApplyNNAction):
             apply_method = apply_nn_methods_selector.get_value()
             batch_size = batch_size_input.get_value()
             model_suffix = model_suffix_input.get_value()
-            use_model_suffix = always_add_suffix_checkbox.is_checked()
+
+            add_suffix_method = add_suffix_method_selector.get_value()
             ignore_labeled = ignore_labeled_checkbox.is_checked()
             add_pred_ann_method = resolve_conflict_method_selector.get_value()
             model_settings_json = model_settings_from_yaml(_model_settings, inf_settings_editor)
@@ -494,7 +496,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
                 "model_settings": model_settings_json,
                 "model_suffix": model_suffix,
                 "add_pred_ann_method": add_pred_ann_method,
-                "use_model_suffix": use_model_suffix,
+                "add_suffix_method": add_suffix_method,
                 "ignore_labeled": ignore_labeled,
                 "apply_method": apply_method,
                 "batch_size": batch_size,
@@ -567,14 +569,14 @@ class ApplyNNInferenceAction(ApplyNNAction):
 
             # model settings
             set_model_suffix_from_json(settings, model_suffix_input)
-            set_use_model_suffix_from_json(settings, always_add_suffix_checkbox)
+            set_use_model_suffix_from_json(settings, add_suffix_method_selector)
             set_model_conflict_from_json(settings, resolve_conflict_method_selector)
             _model_settings = set_model_settings_from_json(settings, inf_settings_editor)
             set_model_apply_method_from_json(settings, apply_nn_methods_selector)
             set_batch_size_from_json(settings, batch_size_input)
             set_model_settings_preview(
                 model_suffix_input,
-                always_add_suffix_checkbox,
+                add_suffix_method_selector,
                 ignore_labeled_checkbox,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
@@ -645,7 +647,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
             update_model_inference_settings(_session_id, _model_settings, inf_settings_editor)
             set_model_settings_preview(
                 model_suffix_input,
-                always_add_suffix_checkbox,
+                add_suffix_method_selector,
                 ignore_labeled_checkbox,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
@@ -668,7 +670,7 @@ class ApplyNNInferenceAction(ApplyNNAction):
             set_default_model_settings(
                 _session_id,
                 model_suffix_input,
-                always_add_suffix_checkbox,
+                add_suffix_method_selector,
                 resolve_conflict_method_selector,
                 apply_nn_methods_selector,
                 inf_settings_editor,

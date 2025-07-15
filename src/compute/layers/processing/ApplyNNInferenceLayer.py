@@ -68,7 +68,7 @@ def postprocess_ann(
         keep_classes,
         keep_tags,
         settings["model_suffix"],
-        settings["use_model_suffix"],
+        settings["add_suffix_method"],
     )
 
     image_tags = []
@@ -102,7 +102,7 @@ def merge_metas(
     keep_model_classes,
     keep_model_tags,
     suffix,
-    use_suffix: bool = False,
+    add_suffix_method: str,
 ):
     res_meta = project_meta.clone()
 
@@ -112,7 +112,7 @@ def merge_metas(
             model_item = model_collection.get(name)
             if model_item is None:
                 continue
-            res_item, res_name = find_item(project_collection, model_item, suffix, use_suffix)
+            res_item, res_name = find_item(project_collection, model_item, suffix, add_suffix_method)
             if res_item is None:
                 res_item = model_item.clone(name=res_name)
                 res_meta = (
@@ -159,14 +159,14 @@ def find_item(
     collection: KeyIndexedCollection,
     item,
     suffix,
-    use_suffix: bool = False,
+    add_suffix_method: str,
 ):
     index = 0
     res_name = item.name.strip()
     while True:
         existing_item = collection.get(res_name.strip())
         if existing_item is None:
-            if use_suffix is True:
+            if add_suffix_method == "all classes":
                 res_name = generate_res_name(item, suffix)
                 existing_item = collection.get(res_name)
                 if existing_item is not None:
@@ -174,7 +174,7 @@ def find_item(
             return None, res_name
         else:
             if existing_item == item.clone(name=res_name):
-                if use_suffix is True:
+                if add_suffix_method == "all classes":
                     res_name = generate_res_name(item, suffix)
                     existing_item = collection.get(res_name)
                     if existing_item is None:
@@ -262,7 +262,7 @@ class ApplyNNInferenceLayer(Layer):
                     "model_meta",
                     "model_settings",
                     "model_suffix",
-                    "use_model_suffix",
+                    "add_suffix_method",
                     "add_pred_ann_method",
                     "apply_method",
                     "batch_size",
@@ -276,7 +276,7 @@ class ApplyNNInferenceLayer(Layer):
                     "model_meta": {"type": "object"},
                     "model_settings": {"type": "object"},
                     "model_suffix": {"type": "string"},
-                    "use_model_suffix": {"type": "boolean"},
+                    "add_suffix_method": {"type": "string", "enum": ["existing classes", "incompatible classes", "all classes"]},
                     "ignore_labeled": {"type": "boolean"},
                     "add_pred_ann_method": {
                         "type": "string",
@@ -322,33 +322,32 @@ class ApplyNNInferenceLayer(Layer):
         model_meta = ProjectMeta().from_json(self.settings["model_meta"])
         classes = self.settings["classes"]
         suffix = self.settings["model_suffix"]
-        use_suffix = self.settings["use_model_suffix"]
+        add_suffix_method = self.settings["add_suffix_method"]
         add_pred_ann_method = self.settings["add_pred_ann_method"]
 
         new_classes = []
-        add_pred_ann_method = self.settings["add_pred_ann_method"]
-        if use_suffix is True:
-            for model_class in model_meta.obj_classes:
-                if model_class.name in classes:
-                    new_classes.append(create_class_entry(model_class, f"-{suffix}"))
+        for model_class in model_meta.obj_classes:
+            if model_class.name not in classes:
+                continue
 
-        elif add_pred_ann_method == "replace":
-            for model_class in model_meta.obj_classes:
-                if model_class.name in classes:
-                    curr_class = current_meta.get_obj_class(model_class.name)
-                    if curr_class is None:
-                        new_classes.append(create_class_entry(model_class))
-                    else:
-                        self.cls_mapping[model_class.name] = create_class_entry(model_class)
+            curr_class = current_meta.get_obj_class(model_class.name)
+            add_suffix = False
+            if add_suffix_method == "all classes":
+                add_suffix = True
+            elif add_suffix_method == "existing classes":
+                add_suffix = curr_class is not None
+            elif add_suffix_method == "incompatible classes":
+                if curr_class is not None:
+                    add_suffix = curr_class.geometry_type != model_class.geometry_type
 
-        elif add_pred_ann_method == "merge":
-            for model_class in model_meta.obj_classes:
-                if model_class.name in classes:
-                    curr_class = current_meta.get_obj_class(model_class.name)
-                    if curr_class is not None:
-                        new_classes.append(create_class_entry(model_class, f"-{suffix}"))
-                    else:
-                        new_classes.append(create_class_entry(model_class))
+            class_entry = create_class_entry(model_class, f"-{suffix}" if add_suffix else None)
+            if add_pred_ann_method == "replace":
+                if curr_class is None:
+                    new_classes.append(class_entry)
+                else:
+                    self.cls_mapping[model_class.name] = class_entry
+            else:
+                new_classes.append(class_entry)
 
         self.cls_mapping[ClassConstants.OTHER] = ClassConstants.DEFAULT
         self.cls_mapping[ClassConstants.NEW] = new_classes
@@ -357,19 +356,29 @@ class ApplyNNInferenceLayer(Layer):
         current_meta = ProjectMeta().from_json(self.settings["current_meta"])
         model_meta = ProjectMeta().from_json(self.settings["model_meta"])
         tags = self.settings["tags"]
-        use_suffix = self.settings["use_model_suffix"]
+        add_suffix_method = self.settings["add_suffix_method"]
         suffix = self.settings["model_suffix"]
 
         new_tag_metas = []
         for model_tag_meta in model_meta.tag_metas:
-            if model_tag_meta.name in tags:
-                curr_tag_meta = current_meta.get_tag_meta(model_tag_meta.name)
-                if use_suffix:
-                    new_tag_metas.append(create_tag_meta_entry(model_tag_meta, f"-{suffix}"))
-                elif curr_tag_meta is not None:
-                    new_tag_metas.append(create_tag_meta_entry(model_tag_meta, f"-{suffix}"))
-                else:
-                    new_tag_metas.append(create_tag_meta_entry(model_tag_meta))
+            if model_tag_meta.name not in tags:
+                continue
+
+            curr_tag_meta = current_meta.get_tag_meta(model_tag_meta.name)
+            add_suffix = False
+            if add_suffix_method == "all classes":
+                add_suffix = True
+            elif add_suffix_method == "existing classes":
+                add_suffix = curr_tag_meta is not None
+            elif add_suffix_method == "incompatible classes":
+                if curr_tag_meta is not None:
+                    try:
+                        add_suffix = not curr_tag_meta.is_compatible(model_tag_meta)
+                    except AttributeError:
+                        add_suffix = curr_tag_meta.value_type != model_tag_meta.value_type
+
+            tag_entry = create_tag_meta_entry(model_tag_meta, f"-{suffix}" if add_suffix else None)
+            new_tag_metas.append(tag_entry)
 
         self.tag_mapping[TagConstants.OTHER] = TagConstants.DEFAULT
         self.tag_mapping[TagConstants.NEW] = new_tag_metas
