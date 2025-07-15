@@ -161,40 +161,37 @@ def find_item(
     suffix,
     add_suffix_method: str,
 ):
-    index = 0
-    res_name = item.name.strip()
-    while True:
-        existing_item = collection.get(res_name.strip())
+    base_name = item.name.strip()
+    existing_item = collection.get(base_name)
+
+    need_suffix = False
+    if add_suffix_method == "all classes":
+        need_suffix = True
+    elif add_suffix_method == "existing classes":
+        need_suffix = existing_item is not None
+    elif add_suffix_method == "incompatible classes":
+        if existing_item is not None:
+            try:
+                need_suffix = not existing_item.is_compatible(item)
+            except AttributeError:
+                need_suffix = existing_item != item.clone(name=base_name)
+
+    if not need_suffix:
         if existing_item is None:
-            if add_suffix_method == "all classes":
-                res_name = generate_res_name(item, suffix)
-                existing_item = collection.get(res_name)
-                if existing_item is not None:
-                    return existing_item, None
-            return None, res_name
+            return None, base_name
         else:
-            if existing_item == item.clone(name=res_name):
-                if add_suffix_method == "all classes":
-                    res_name = generate_res_name(item, suffix)
-                    existing_item = collection.get(res_name)
-                    if existing_item is None:
-                        return None, res_name
-                    elif existing_item == item.clone(name=res_name):
-                        res_name = generate_res_name(item, suffix)
-                        existing_item = collection.get(res_name)
-                        if existing_item is None:
-                            return None, res_name
-                        return existing_item, None
-                    else:
-                        index += 1
-                        res_name = generate_res_name(item, suffix)
-                        existing_item = collection.get(res_name)
-                        if existing_item is None:
-                            return None, res_name
-                return existing_item, None
-            else:
-                res_name = generate_res_name(item, suffix)
-                index += 1
+            return existing_item, None
+
+    suffixed_name = generate_res_name(item, suffix)
+    existing_suffixed_item = collection.get(suffixed_name)
+
+    if existing_suffixed_item is None:
+        return None, suffixed_name
+    else:
+        if existing_suffixed_item == item.clone(name=suffixed_name):
+            return existing_suffixed_item, None
+        else:
+            return None, suffixed_name
 
 
 def apply_model_to_image(
