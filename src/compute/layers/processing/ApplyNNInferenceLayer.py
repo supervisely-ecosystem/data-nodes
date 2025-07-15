@@ -327,22 +327,20 @@ class ApplyNNInferenceLayer(Layer):
             if model_class.name not in classes:
                 continue
 
-            curr_class = current_meta.get_obj_class(model_class.name)
-            add_suffix = False
-            if add_suffix_method == "all classes":
-                add_suffix = True
-            elif add_suffix_method == "existing classes":
-                add_suffix = curr_class is not None
-            elif add_suffix_method == "incompatible classes":
-                if curr_class is not None:
-                    add_suffix = curr_class.geometry_type != model_class.geometry_type
+            res_item, res_name = find_item(
+                current_meta.obj_classes, model_class, suffix, add_suffix_method
+            )
 
-            class_entry = create_class_entry(model_class, f"-{suffix}" if add_suffix else None)
-            if add_pred_ann_method == "replace":
-                if curr_class is None:
-                    new_classes.append(class_entry)
-                else:
-                    self.cls_mapping[model_class.name] = class_entry
+            if res_item is not None:
+                if res_item.name != model_class.name:
+                    self.cls_mapping[model_class.name] = create_class_entry(res_item)
+                continue
+
+            need_suffix = res_name != model_class.name
+            class_entry = create_class_entry(model_class, f"-{suffix}" if need_suffix else None)
+
+            if add_pred_ann_method == "replace" and current_meta.get_obj_class(model_class.name):
+                self.cls_mapping[model_class.name] = class_entry
             else:
                 new_classes.append(class_entry)
 
@@ -361,20 +359,17 @@ class ApplyNNInferenceLayer(Layer):
             if model_tag_meta.name not in tags:
                 continue
 
-            curr_tag_meta = current_meta.get_tag_meta(model_tag_meta.name)
-            add_suffix = False
-            if add_suffix_method == "all classes":
-                add_suffix = True
-            elif add_suffix_method == "existing classes":
-                add_suffix = curr_tag_meta is not None
-            elif add_suffix_method == "incompatible classes":
-                if curr_tag_meta is not None:
-                    try:
-                        add_suffix = not curr_tag_meta.is_compatible(model_tag_meta)
-                    except AttributeError:
-                        add_suffix = curr_tag_meta.value_type != model_tag_meta.value_type
+            res_item, res_name = find_item(
+                current_meta.tag_metas, model_tag_meta, suffix, add_suffix_method
+            )
 
-            tag_entry = create_tag_meta_entry(model_tag_meta, f"-{suffix}" if add_suffix else None)
+            if res_item is not None:
+                continue
+
+            need_suffix = res_name != model_tag_meta.name
+            tag_entry = create_tag_meta_entry(
+                model_tag_meta, f"-{suffix}" if need_suffix else None
+            )
             new_tag_metas.append(tag_entry)
 
         self.tag_mapping[TagConstants.OTHER] = TagConstants.DEFAULT
