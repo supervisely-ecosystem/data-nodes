@@ -29,7 +29,7 @@ Supported models:
 - **Model Settings**
   - **Add suffix method** - Select how to add suffix to the class name.
     - Available methods:
-      - **Add only to classes that already exists** - Suffix will be added only to model classes that already exists in the project meta.
+      - **Add only to existing classes** - Suffix will be added only to model classes that already exists in the project meta with the same name.
       - **Add only to conflicting classes** - Suffix will be added only to model classes if a class with the same name already exists in the project meta but has different geometry type.
       - **Always add suffix** - Suffix will be added to all model classes and tags.
   - **How to add predictions** - Select how to add the predicted annotation to the image.
@@ -144,7 +144,7 @@ Supported models:
 		},
 		"model_suffix": "model",
 		"model_conflict": "replace",
-		"use_model_suffix": true,
+		"add_suffix_method": "all classes",
 		"apply_method": "image",
 		"classes": [
 				"person",
