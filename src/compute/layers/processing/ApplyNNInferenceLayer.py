@@ -21,7 +21,6 @@ from supervisely._utils import batched
 
 # from src.ui.tabs.run import error_notification
 
-
 def check_model_is_deployed(session_id: int, preview_mode: bool = False):
     try:
         session = Session(g.api, session_id)
@@ -59,16 +58,20 @@ def postprocess_ann(
     project_meta: ProjectMeta,
     model_meta: ProjectMeta,
     settings,
+    cls_sfx_mapping: dict,
+    tag_sfx_mapping: dict,
 ):
     keep_classes = settings["classes"]
     keep_tags = settings["tags"]
+    suffix = settings["model_suffix"]
     res_project_meta, class_mapping, tag_meta_mapping = merge_metas(
         project_meta,
         model_meta,
         keep_classes,
         keep_tags,
-        settings["model_suffix"],
-        settings["use_model_suffix"],
+        suffix,
+        cls_sfx_mapping,
+        tag_sfx_mapping,
     )
 
     image_tags = []
@@ -101,17 +104,18 @@ def merge_metas(
     model_meta: ProjectMeta,
     keep_model_classes,
     keep_model_tags,
-    suffix,
-    use_suffix: bool = False,
+    suffix: str,
+    cls_sfx_mapping: dict,
+    tag_sfx_mapping: dict,
 ):
     res_meta = project_meta.clone()
-
     def _merge(keep_names, res_meta, project_collection, model_collection, is_class=False):
         mapping = {}  # old name to new meta
         for name in keep_names:
             model_item = model_collection.get(name)
             if model_item is None:
                 continue
+            use_suffix = cls_sfx_mapping.get(name, False) if is_class else tag_sfx_mapping.get(name, False)
             res_item, res_name = find_item(project_collection, model_item, suffix, use_suffix)
             if res_item is None:
                 res_item = model_item.clone(name=res_name)
@@ -132,7 +136,7 @@ def merge_metas(
     return res_meta, class_mapping, tag_mapping
 
 
-def generate_res_name(item, suffix):
+def generate_res_name(item, suffix: str):
     return f"{item.name}-{suffix}"
 
 
@@ -158,7 +162,7 @@ def create_tag_meta_entry(tag_meta: TagMeta, suffix: str = None):
 def find_item(
     collection: KeyIndexedCollection,
     item,
-    suffix,
+    suffix: str,
     use_suffix: bool = False,
 ):
     index = 0
@@ -205,10 +209,12 @@ def apply_model_to_image(
     model_meta: ProjectMeta,
     output_meta: ProjectMeta,
     settings: dict,
+    cls_sfx_mapping: dict,
+    tag_sfx_mapping: dict,
 ):
     try:
         pred_ann = session.inference_image_path(image_path)
-        pred_ann, res_meta = postprocess_ann(pred_ann, output_meta, model_meta, settings)
+        pred_ann, res_meta = postprocess_ann(pred_ann, output_meta, model_meta, settings, cls_sfx_mapping, tag_sfx_mapping)
     except:
         sly_logger.warn(
             f"Could not apply model to image: {image_desc.info.item_info.name}(ID: {image_desc.info.item_info.id})"
@@ -226,6 +232,8 @@ def apply_model_to_images(
     model_meta: ProjectMeta,
     output_meta: ProjectMeta,
     settings: dict,
+    cls_sfx_mapping: dict,
+    tag_sfx_mapping: dict,
     batch_size: int = 50,
 ):
     pred_anns = []
@@ -233,7 +241,7 @@ def apply_model_to_images(
         for paths_batch in batched(image_paths, batch_size):
             predictions = session.inference_image_paths(paths_batch)
             for pred_ann in predictions:
-                pred_ann, res_meta = postprocess_ann(pred_ann, output_meta, model_meta, settings)
+                pred_ann, res_meta = postprocess_ann(pred_ann, output_meta, model_meta, settings, cls_sfx_mapping, tag_sfx_mapping)
                 pred_anns.append(pred_ann)
     except:
         # FIX FOR BATCH
@@ -262,7 +270,7 @@ class ApplyNNInferenceLayer(Layer):
                     "model_meta",
                     "model_settings",
                     "model_suffix",
-                    "use_model_suffix",
+                    "add_suffix_method",
                     "add_pred_ann_method",
                     "apply_method",
                     "batch_size",
@@ -276,7 +284,7 @@ class ApplyNNInferenceLayer(Layer):
                     "model_meta": {"type": "object"},
                     "model_settings": {"type": "object"},
                     "model_suffix": {"type": "string"},
-                    "use_model_suffix": {"type": "boolean"},
+                    "add_suffix_method": {"type": "string", "enum": ["all classes", "existing classes", "conflicting classes"]},
                     "ignore_labeled": {"type": "boolean"},
                     "add_pred_ann_method": {
                         "type": "string",
@@ -300,6 +308,8 @@ class ApplyNNInferenceLayer(Layer):
             }
         },
     }
+    cls_sfx_mapping = {}
+    tag_sfx_mapping = {}
 
     def __init__(self, config, net):
         Layer.__init__(self, config, net=net)
@@ -322,33 +332,43 @@ class ApplyNNInferenceLayer(Layer):
         model_meta = ProjectMeta().from_json(self.settings["model_meta"])
         classes = self.settings["classes"]
         suffix = self.settings["model_suffix"]
-        use_suffix = self.settings["use_model_suffix"]
-        add_pred_ann_method = self.settings["add_pred_ann_method"]
+        add_suffix_method = self.settings["add_suffix_method"]
+        use_suffix = add_suffix_method == "all classes"
+        self.cls_sfx_mapping = {}
 
         new_classes = []
-        add_pred_ann_method = self.settings["add_pred_ann_method"]
         if use_suffix is True:
             for model_class in model_meta.obj_classes:
                 if model_class.name in classes:
                     new_classes.append(create_class_entry(model_class, f"-{suffix}"))
-
-        elif add_pred_ann_method == "replace":
+                    self.cls_sfx_mapping[model_class.name] = True
+        else:
             for model_class in model_meta.obj_classes:
                 if model_class.name in classes:
                     curr_class = current_meta.get_obj_class(model_class.name)
-                    if curr_class is None:
-                        new_classes.append(create_class_entry(model_class))
+                    if add_suffix_method == "existing classes":
+                        if curr_class is not None:
+                            new_classes.append(create_class_entry(model_class, f"-{suffix}"))
+                            self.cls_sfx_mapping[model_class.name] = True
+                        else:
+                            new_classes.append(create_class_entry(model_class))
+                            self.cls_sfx_mapping[model_class.name] = False
+                    elif add_suffix_method == "conflicting classes":
+                        if curr_class is not None:
+                            if curr_class.geometry_type.name() != model_class.geometry_type.name():
+                                new_classes.append(create_class_entry(model_class, f"-{suffix}"))
+                                self.cls_sfx_mapping[model_class.name] = True
+                            else:
+                                new_classes.append(create_class_entry(model_class))
+                                self.cls_sfx_mapping[model_class.name] = False
+                        else:
+                            new_classes.append(create_class_entry(model_class))
+                            self.cls_sfx_mapping[model_class.name] = False
                     else:
-                        self.cls_mapping[model_class.name] = create_class_entry(model_class)
-
-        elif add_pred_ann_method == "merge":
-            for model_class in model_meta.obj_classes:
-                if model_class.name in classes:
-                    curr_class = current_meta.get_obj_class(model_class.name)
-                    if curr_class is not None:
-                        new_classes.append(create_class_entry(model_class, f"-{suffix}"))
-                    else:
-                        new_classes.append(create_class_entry(model_class))
+                        raise ValueError(f"Invalid add_suffix_method: {add_suffix_method}. Must be one of: 'all classes', 'existing classes', 'conflicting classes'.")
+                else:
+                    new_classes.append(create_class_entry(model_class))
+                    self.cls_sfx_mapping[model_class.name] = False
 
         self.cls_mapping[ClassConstants.OTHER] = ClassConstants.DEFAULT
         self.cls_mapping[ClassConstants.NEW] = new_classes
@@ -357,8 +377,10 @@ class ApplyNNInferenceLayer(Layer):
         current_meta = ProjectMeta().from_json(self.settings["current_meta"])
         model_meta = ProjectMeta().from_json(self.settings["model_meta"])
         tags = self.settings["tags"]
-        use_suffix = self.settings["use_model_suffix"]
+        add_suffix_method = self.settings["add_suffix_method"]
+        use_suffix = add_suffix_method == "all classes"
         suffix = self.settings["model_suffix"]
+        self.tag_sfx_mapping = {}
 
         new_tag_metas = []
         for model_tag_meta in model_meta.tag_metas:
@@ -366,10 +388,17 @@ class ApplyNNInferenceLayer(Layer):
                 curr_tag_meta = current_meta.get_tag_meta(model_tag_meta.name)
                 if use_suffix:
                     new_tag_metas.append(create_tag_meta_entry(model_tag_meta, f"-{suffix}"))
+                    self.tag_sfx_mapping[model_tag_meta.name] = True
                 elif curr_tag_meta is not None:
-                    new_tag_metas.append(create_tag_meta_entry(model_tag_meta, f"-{suffix}"))
+                    if curr_tag_meta.is_compatible(model_tag_meta):
+                        new_tag_metas.append(create_tag_meta_entry(model_tag_meta))
+                        self.tag_sfx_mapping[model_tag_meta.name] = False
+                    else:
+                        new_tag_metas.append(create_tag_meta_entry(model_tag_meta, f"-{suffix}"))
+                        self.tag_sfx_mapping[model_tag_meta.name] = True
                 else:
                     new_tag_metas.append(create_tag_meta_entry(model_tag_meta))
+                    self.tag_sfx_mapping[model_tag_meta.name] = False
 
         self.tag_mapping[TagConstants.OTHER] = TagConstants.DEFAULT
         self.tag_mapping[TagConstants.NEW] = new_tag_metas
@@ -412,6 +441,8 @@ class ApplyNNInferenceLayer(Layer):
                         model_meta,
                         self.output_meta,
                         self.settings,
+                        self.cls_sfx_mapping,
+                        self.tag_sfx_mapping,
                     )
                 except:
                     if not self.net.preview_mode:
@@ -435,6 +466,8 @@ class ApplyNNInferenceLayer(Layer):
                                 model_meta,
                                 self.output_meta,
                                 self.settings,
+                                self.cls_sfx_mapping,
+                                self.tag_sfx_mapping,
                             )
                         except:
                             g.api.app.stop(session_id)
@@ -518,6 +551,8 @@ class ApplyNNInferenceLayer(Layer):
                         model_meta,
                         self.output_meta,
                         self.settings,
+                        self.cls_sfx_mapping,
+                        self.tag_sfx_mapping,
                         batch_size=batch_size,
                     )
                 except:
@@ -542,6 +577,8 @@ class ApplyNNInferenceLayer(Layer):
                                 model_meta,
                                 self.output_meta,
                                 self.settings,
+                                self.cls_sfx_mapping,
+                                self.tag_sfx_mapping,
                                 batch_size=batch_size,
                             )
                         except:

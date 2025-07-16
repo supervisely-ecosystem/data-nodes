@@ -30,8 +30,16 @@ def create_inference_settings_widgets():
         content=model_suffix_input,
     )
 
-    always_add_suffix_checkbox = Checkbox(
-        content=Text("<b>Always add suffix to model predictions</b>", "text")
+    add_suffix_methods = [
+        Select.Item(value="existing classes", label="Add only to existing classes"),
+        Select.Item(value="conflicting classes", label="Add only to conflicting classes"),
+        Select.Item(value="all classes", label="Always add suffix"),
+    ]
+    add_suffix_method_selector = Select(add_suffix_methods, size="small")
+    add_suffix_method_field = Field(
+        title="Add suffix method",
+        description="Select how to add suffix to model predictions. Learn more in layer documentation.",
+        content=add_suffix_method_selector,
     )
 
     resolve_conflict_methods = [
@@ -95,7 +103,7 @@ def create_inference_settings_widgets():
     inf_settings_widgets_container = Container(
         widgets=[
             model_suffix_field,
-            always_add_suffix_checkbox,
+            add_suffix_method_field,
             resolve_conflict_method_field,
             inf_settings_editor_field,
             apply_nn_methods_field,
@@ -162,7 +170,8 @@ def create_inference_settings_widgets():
 
     return (
         model_suffix_input,
-        always_add_suffix_checkbox,
+        add_suffix_method_selector,
+        add_suffix_method_field,
         ignore_labeled_checkbox,
         resolve_conflict_method_selector,
         inf_settings_editor,

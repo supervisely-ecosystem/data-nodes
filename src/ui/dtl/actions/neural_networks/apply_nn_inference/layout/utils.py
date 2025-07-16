@@ -225,12 +225,9 @@ def set_model_suffix_from_json(settings: dict, model_suffix_input: Input) -> Non
     model_suffix_input.set_value(model_suffix)
 
 
-def set_use_model_suffix_from_json(settings: dict, always_add_suffix_checkbox: Checkbox) -> None:
-    model_use_suffix = settings.get("use_model_suffix", False)
-    if model_use_suffix:
-        always_add_suffix_checkbox.check()
-    else:
-        always_add_suffix_checkbox.uncheck()
+def set_use_model_suffix_from_json(settings: dict, add_suffix_method_selector: Select) -> None:
+    add_suffix_method = settings.get("add_suffix_method", "existing classes")
+    add_suffix_method_selector.set_value(add_suffix_method)
 
 
 def set_model_conflict_from_json(settings: dict, resolve_conflict_method_selector: Select) -> None:
@@ -264,10 +261,9 @@ def set_model_preview(model_info: dict, connect_nn_model_preview: Text) -> None:
     model_name_w_link = f'<a href="{g.api.server_address}{g.api.app.get_url(model_info["session_id"])}" target="_blank">{model_name}</a>'
     connect_nn_model_preview.set(model_name_w_link, "text")
 
-
 def set_model_settings_preview(
     model_suffix_input: Input,
-    always_add_suffix_checkbox: Checkbox,
+    add_suffix_method_selector: Select,
     ignore_labeled_checkbox: CheckboxField,
     resolve_conflict_method_selector: Select,
     apply_nn_methods_selector: Select,
@@ -280,14 +276,14 @@ def set_model_settings_preview(
     batch_size_preview: Text,
 ) -> None:
     model_suffix = model_suffix_input.get_value()
-    model_use_suffix = always_add_suffix_checkbox.is_checked()
+    model_use_suffix_method = add_suffix_method_selector.get_value()
     ignore_labeled = ignore_labeled_checkbox.is_checked()
     model_conflict = resolve_conflict_method_selector.get_label()
     apply_method = apply_nn_methods_selector.get_label()
     batch_size = batch_size_input.get_value()
 
     suffix_preview.set(f"Suffix: {model_suffix}", "text")
-    use_suffix_preview.set(f"Always use suffix: {str(model_use_suffix)}", "text")
+    use_suffix_preview.set(f"Add suffix to: {model_use_suffix_method}", "text")
     conflict_method_preview.set(f"How to add prediction: {model_conflict}", "text")
     ignore_labeled_preview.set(f"Skip already labeled images: {str(ignore_labeled)}", "text")
     apply_method_preview.set(f"Apply method: {apply_method}", "text")
@@ -299,7 +295,6 @@ def set_model_settings_preview(
     ignore_labeled_preview.show()
     apply_method_preview.show()
     batch_size_preview.show()
-
 
 ### -----------------------------
 
@@ -389,7 +384,7 @@ def reset_model(
 def set_default_model_settings(
     session_id: int,
     model_suffix_input: Input,
-    always_add_suffix_checkbox: Checkbox,
+    add_suffix_method_selector: Select,
     resolve_conflict_method_selector,
     apply_nn_methods_selector: Select,
     inf_settings_editor: Editor,
@@ -399,9 +394,9 @@ def set_default_model_settings(
     model_suffix_input.set_value("model")
     model_suffix_input.loading = False
 
-    always_add_suffix_checkbox.loading = True
-    always_add_suffix_checkbox.uncheck()
-    always_add_suffix_checkbox.loading = False
+    add_suffix_method_selector.loading = True
+    add_suffix_method_selector.set_value("existing classes")
+    add_suffix_method_selector.loading = False
 
     resolve_conflict_method_selector.loading = True
     resolve_conflict_method_selector.set_value("merge")
