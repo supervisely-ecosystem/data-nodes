@@ -31,7 +31,7 @@ def create_inference_settings_widgets():
     )
 
     add_suffix_methods = [
-        Select.Item(value="existing classes", label="Add only to classes that already exists"),
+        Select.Item(value="existing classes", label="Add only to existing classes"),
         Select.Item(value="conflicting classes", label="Add only to conflicting classes"),
         Select.Item(value="all classes", label="Always add suffix"),
     ]
