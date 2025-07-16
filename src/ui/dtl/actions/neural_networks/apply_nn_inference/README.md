@@ -27,11 +27,11 @@ Supported models:
 - **Tags** - Choose model tags that will be assigned to the labeled objects. If no tags are selected, no tags will be assigned.
 - **Class / Tag name suffix** - Suffix that will be added to the class / tag name if it have conflict with existing class / tag in the project. For example, if the input project has existing class with name `person` and the suffix is `model`, the resulting class name will be `person-model`.
 - **Model Settings**
-  - **Add suffix method** - Select how to add suffix to the class / tag name.
+  - **Add suffix method** - Select how to add suffix to the class name.
     - Available methods:
-      - **Add only to classes that already exists** - Suffix will be added only to classes that already exists in both model and project metas.
-      - **Add only to incompatible classes** - Suffix will be added only to classes that have different shapes in model and project metas.
-      - **Always add suffix** - Suffix will be added to all classes and tags.
+      - **Add only to classes that already exists** - Suffix will be added only to model classes that already exists in the project meta.
+      - **Add only to conflicting classes** - Suffix will be added only to model classes if a class with the same name already exists in the project meta but has different geometry type.
+      - **Always add suffix** - Suffix will be added to all model classes and tags.
   - **How to add predictions** - Select how to add the predicted annotation to the image.
     - Available methods:
       - **Merge** - Merge predicted annotation with the existing one.

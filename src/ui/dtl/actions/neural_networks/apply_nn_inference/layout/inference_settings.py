@@ -32,13 +32,13 @@ def create_inference_settings_widgets():
 
     add_suffix_methods = [
         Select.Item(value="existing classes", label="Add only to classes that already exists"),
-        Select.Item(value="incompatible classes", label="Add only to incompatible classes"),
+        Select.Item(value="conflicting classes", label="Add only to conflicting classes"),
         Select.Item(value="all classes", label="Always add suffix"),
     ]
     add_suffix_method_selector = Select(add_suffix_methods, size="small")
     add_suffix_method_field = Field(
         title="Add suffix method",
-        description="Select how to add suffix to model predictions",
+        description="Select how to add suffix to model predictions. Learn more in layer documentation.",
         content=add_suffix_method_selector,
     )
 
