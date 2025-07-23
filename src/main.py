@@ -237,7 +237,7 @@ def run_pipeline_from_api(response: Response, request: Request):
 
 
 @server.post("/get_pipeline_status")
-def run_pipeline_from_api(response: Response, request: Request):
+def get_pipeline_status_from_api(response: Response, request: Request):
     try:
         # @TODO: improve stats
         if not g.pipeline_running:
