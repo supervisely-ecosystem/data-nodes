@@ -81,6 +81,8 @@ def save_model_settings(
     model_selector_stop_model_after_pipeline_checkbox: Checkbox,
     train_version: str = "v1",
 ):
+    from supervisely.nn import ExperimentInfo
+
     model_params = {}
     # MODEL SELECTOR
     model_source = model_selector_sidebar_model_source_tabs.get_active_tab()
@@ -95,19 +97,19 @@ def save_model_settings(
         )
         if selected_checkpoint is None:
             raise RuntimeError("Please, select a model before saving it.")
-        experiment_info = model_selector_sidebar_custom_model_table.get_selected_experiment_info()
+        experiment_info: ExperimentInfo = (
+            model_selector_sidebar_custom_model_table.get_selected_experiment_info()
+        )
         if train_version == "v1":
             model_params = {
-                "task_type": experiment_info["task_type"],
+                "task_type": experiment_info.task_type,
                 "checkpoint_name": get_file_name_with_ext(selected_checkpoint),
                 "checkpoint_url": selected_checkpoint,
             }
-            model_files = experiment_info["model_files"]
+            model_files = experiment_info.model_files
             config = model_files.get("config")
             if config is not None:
-                model_params["config_url"] = join(
-                    experiment_info["artifacts_dir"], config.strip("/")
-                )
+                model_params["config_url"] = join(experiment_info.artifacts_dir, config.strip("/"))
         elif train_version == "v2":
             model_params = model_selector_sidebar_custom_model_table.get_deploy_params()
 
