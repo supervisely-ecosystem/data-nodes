@@ -1,7 +1,6 @@
 from os.path import join
 from typing import List
 
-import src.globals as g
 from supervisely.api.agent_api import AgentInfo
 from supervisely.api.api import Api
 from supervisely.api.app_api import SessionInfo
@@ -18,6 +17,8 @@ from supervisely.app.widgets import (
 )
 from supervisely.io.fs import get_file_name_with_ext
 from supervisely.nn.utils import ModelSource
+
+import src.globals as g
 
 
 def set_agent_selector_preview(
@@ -89,12 +90,12 @@ def save_model_settings(
         )
 
     elif model_source == ModelSource.CUSTOM:
-        if model_selector_sidebar_custom_model_table.get_selected_row() is None:
+        selected_checkpoint = (
+            model_selector_sidebar_custom_model_table.get_selected_checkpoint_name()
+        )
+        if selected_checkpoint is None:
             raise RuntimeError("Please, select a model before saving it.")
         experiment_info = model_selector_sidebar_custom_model_table.get_selected_experiment_info()
-        selected_checkpoint = (
-            model_selector_sidebar_custom_model_table.get_selected_checkpoint_path()
-        )
         if train_version == "v1":
             model_params = {
                 "task_type": experiment_info["task_type"],
