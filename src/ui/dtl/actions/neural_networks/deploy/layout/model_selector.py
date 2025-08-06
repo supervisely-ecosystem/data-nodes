@@ -1,20 +1,20 @@
 from supervisely.app.widgets import (
-    Text,
     Button,
-    Container,
-    RadioTabs,
-    ExperimentSelector,
-    PretrainedModelsSelector,
     Checkbox,
-    Select,
+    Container,
+    ExperimentSelector,
     Field,
+    PretrainedModelsSelector,
+    RadioTabs,
+    Select,
+    Text,
 )
 from supervisely.nn.inference import RuntimeType
-from supervisely.nn.utils import ModelSource
 from supervisely.nn.task_type import TaskType
+from supervisely.nn.utils import ModelSource
+
 import src.globals as g
 from src.ui.dtl.utils import (
-    get_text_font_size,
     create_save_btn,
     get_set_settings_button_style,
     get_set_settings_container,
@@ -34,7 +34,9 @@ def create_model_selector_widgets(
     # SIDEBAR
 
     # CUSTOM MODEL OPTION SUPERVISELY
-    model_selector_sidebar_custom_model_table = ExperimentSelector(g.TEAM_ID, custom_models)
+    model_selector_sidebar_custom_model_table = ExperimentSelector(
+        team_id=g.TEAM_ID, experiment_infos=custom_models
+    )
     # ------------------------------
 
     # PUBLIC MODEL OPTIONS
