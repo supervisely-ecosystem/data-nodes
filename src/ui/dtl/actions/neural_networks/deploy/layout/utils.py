@@ -1,6 +1,7 @@
 from os.path import join
 from typing import List
 
+import src.globals as g
 from supervisely.api.agent_api import AgentInfo
 from supervisely.api.api import Api
 from supervisely.api.app_api import SessionInfo
@@ -17,8 +18,6 @@ from supervisely.app.widgets import (
 )
 from supervisely.io.fs import get_file_name_with_ext
 from supervisely.nn.utils import ModelSource
-
-import src.globals as g
 
 
 def set_agent_selector_preview(
@@ -81,8 +80,6 @@ def save_model_settings(
     model_selector_stop_model_after_pipeline_checkbox: Checkbox,
     train_version: str = "v1",
 ):
-    from supervisely.nn import ExperimentInfo
-
     model_params = {}
     # MODEL SELECTOR
     model_source = model_selector_sidebar_model_source_tabs.get_active_tab()
@@ -97,7 +94,7 @@ def save_model_settings(
         )
         if selected_checkpoint is None:
             raise RuntimeError("Please, select a model before saving it.")
-        experiment_info: ExperimentInfo = (
+        experiment_info = (
             model_selector_sidebar_custom_model_table.get_selected_experiment_info()
         )
         if train_version == "v1":

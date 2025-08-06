@@ -1,20 +1,20 @@
 from supervisely.app.widgets import (
-    Button,
-    Checkbox,
-    Container,
-    ExperimentSelector,
-    Field,
-    PretrainedModelsSelector,
-    RadioTabs,
-    Select,
     Text,
+    Button,
+    Container,
+    RadioTabs,
+    ExperimentSelector,
+    PretrainedModelsSelector,
+    Checkbox,
+    Select,
+    Field,
 )
 from supervisely.nn.inference import RuntimeType
-from supervisely.nn.task_type import TaskType
 from supervisely.nn.utils import ModelSource
-
+from supervisely.nn.task_type import TaskType
 import src.globals as g
 from src.ui.dtl.utils import (
+    get_text_font_size,
     create_save_btn,
     get_set_settings_button_style,
     get_set_settings_container,
