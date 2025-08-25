@@ -1,6 +1,5 @@
 import ast
 import os
-from distutils.util import strtobool
 from queue import Queue
 
 import supervisely as sly

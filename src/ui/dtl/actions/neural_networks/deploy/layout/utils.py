@@ -11,7 +11,6 @@ from supervisely.app.widgets import (
     Checkbox,
     ExperimentSelector,
     PretrainedModelsSelector,
-    RadioGroup,
     RadioTabs,
     Select,
     Text,
@@ -73,7 +72,7 @@ def save_agent_settings(
 
 def save_model_settings(
     settings: dict,
-    model_selector_sidebar_model_source_tabs: RadioGroup,
+    model_selector_sidebar_model_source_tabs: RadioTabs,
     model_selector_sidebar_public_model_table: PretrainedModelsSelector,
     model_selector_runtime_selector_sidebar: Select,
     model_selector_sidebar_custom_model_table: ExperimentSelector,
@@ -94,9 +93,7 @@ def save_model_settings(
         )
         if selected_checkpoint is None:
             raise RuntimeError("Please, select a model before saving it.")
-        experiment_info = (
-            model_selector_sidebar_custom_model_table.get_selected_experiment_info()
-        )
+        experiment_info = model_selector_sidebar_custom_model_table.get_selected_experiment_info()
         if train_version == "v1":
             model_params = {
                 "task_type": experiment_info.task_type,
@@ -108,7 +105,26 @@ def save_model_settings(
             if config is not None:
                 model_params["config_url"] = join(experiment_info.artifacts_dir, config.strip("/"))
         elif train_version == "v2":
-            model_params = model_selector_sidebar_custom_model_table.get_deploy_params()
+            model_info = (
+                model_selector_sidebar_custom_model_table.get_selected_experiment_info_json()
+            )
+
+            artifacts_dir = model_info["artifacts_dir"]
+            checkpoint_path = (
+                model_selector_sidebar_custom_model_table.get_selected_checkpoint_path()
+            )
+            model_files = model_info["model_files"]
+
+            full_model_files = {
+                name: join(artifacts_dir, file) for name, file in model_files.items()
+            }
+            full_model_files["checkpoint"] = checkpoint_path
+
+            model_params = {
+                "model_source": ModelSource.CUSTOM,
+                "model_files": full_model_files,
+                "model_info": model_info,
+            }
 
     stop_model_session = model_selector_stop_model_after_pipeline_checkbox.is_checked()
 
