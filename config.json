@@ -12,7 +12,7 @@
     "videos",
     "annotation transformation"
   ],
-  "docker_image": "supervisely/data-nodes:1.0.33",
+  "docker_image": "supervisely/data-nodes:1.0.34",
   "modal_template": "src/modal.html",
   "modal_template_state": {
     "modalityType": "images"
@@ -31,5 +31,5 @@
       "files_file"
     ]
   },
-  "instance_version": "6.13.1"
+  "instance_version": "6.15.0"
 }
