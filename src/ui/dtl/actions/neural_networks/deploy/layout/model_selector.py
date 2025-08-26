@@ -34,7 +34,9 @@ def create_model_selector_widgets(
     # SIDEBAR
 
     # CUSTOM MODEL OPTION SUPERVISELY
-    model_selector_sidebar_custom_model_table = ExperimentSelector(g.TEAM_ID, custom_models)
+    model_selector_sidebar_custom_model_table = ExperimentSelector(
+        api=g.api, team_id=g.TEAM_ID, experiment_infos=custom_models
+    )
     # ------------------------------
 
     # PUBLIC MODEL OPTIONS
