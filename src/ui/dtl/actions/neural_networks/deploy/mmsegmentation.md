@@ -1,7 +1,7 @@
 
 # Deploy MMSegmentation
 
-`Deploy MMSegmentation` using [Serve MMSegmentation](../../../../supervisely-ecosystem/mmsegmentation/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained MMSegmentation models in your Team Files. You can train your own model using [Train MMSegmentation](../../../../supervisely-ecosystem/mmsegmentation/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
+`Deploy MMSegmentation` using [Serve MMSegmentation](../../../../supervisely-ecosystem/mmsegmentation/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained MMSegmentation models in your Team Files. You can train your own model using [Train MMSegmentation](../../../../../supervisely-ecosystem/mmsegmentation/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
 
 ### Settings:
 
