@@ -1,6 +1,6 @@
 # Deploy RT-DETRv2
 
-`Deploy DEIM` using [Serve DEIM](../../../../supervisely-ecosystem/deim/supervisely_integration/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained DEIM models in your Team Files. You can train your own model using [Train DEIM](../../../../supervisely-ecosystem/deim/supervisely_integration/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
+`Deploy DEIM` using [Serve DEIM](../../../../supervisely-ecosystem/deim/supervisely_integration/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained DEIM models in your Team Files. You can train your own model using [Train DEIM](../../../../../../supervisely-ecosystem/deim/supervisely_integration/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
 
 ### Settings:
 
