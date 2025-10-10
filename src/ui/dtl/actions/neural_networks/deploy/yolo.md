@@ -1,6 +1,6 @@
 # YOLO v8 - v12
 
-`Deploy YOLO v8 - v12` using [Serve YOLO v8 - v12](https://ecosystem.supervisely.com/apps/yolo/supervisely_integration/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained YOLO v8 - v12 models in your Team Files. You can train your own model using [Train YOLO v8 - v12](https://ecosystem.supervisely.com/apps/yolo/supervisely_integration/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
+`Deploy YOLO v8 - v12` using [Serve YOLO v8 - v12](../../../../supervisely-ecosystem/yolo/supervisely_integration/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained YOLO v8 - v12 models in your Team Files. You can train your own model using [Train YOLO v8 - v12](../../../../supervisely-ecosystem/yolo/supervisely_integration/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
 
 
 - YOLOv8 is a powerful neural network architecture that provides both decent accuracy of predictions and high speed of inference. In comparison to YOLOv5, YOLOv8 uses an anchor-free head (allowing to speed up the non-max suppression (NMS) process), a new backbone, and new loss functions.
