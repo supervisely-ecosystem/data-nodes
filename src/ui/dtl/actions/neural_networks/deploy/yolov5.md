@@ -1,6 +1,6 @@
 # Deploy YOLOv5
 
-`Deploy YOLOv5` using [Serve YOLOv5](https://ecosystem.supervisely.com/apps/yolov5_2.0/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained YOLOv5 models in your Team Files. You can train your own model using [Train YOLOv5](https://ecosystem.supervisely.com/apps/yolov5_2.0/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
+`Deploy YOLOv5` using [Serve YOLOv5](../../../../supervisely-ecosystem/yolov5_2.0/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained YOLOv5 models in your Team Files. You can train your own model using [Train YOLOv5](../../../../supervisely-ecosystem/yolov5_2.0/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
 
 ### Settings:
 
