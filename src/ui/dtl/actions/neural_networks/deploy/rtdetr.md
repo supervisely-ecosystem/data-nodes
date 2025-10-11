@@ -1,6 +1,6 @@
 # Deploy RT-DETR
 
-`Deploy RT-DETR` using [Serve RT-DETR](../../../../supervisely-ecosystem/rt-detr/supervisely_integration/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained RT-DETR models in your Team Files. You can train your own model using [Train RT-DETR](../../../../../../supervisely-ecosystem/rt-detr/supervisely_integration/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
+`Deploy RT-DETR` using [Serve RT-DETR](../../../../supervisely-ecosystem/rt-detr/supervisely_integration/serve) app to serve models and can be used to deploy custom and pretrained models that you can use via `Apply NN` layer. Custom models will appear in the custom tab of the table only if you have any trained RT-DETR models in your Team Files. You can train your own model using [Train RT-DETR](https://ecosystem.supervisely.com/apps/rt-detr/supervisely_integration/train) app. If you want to use pretrained models, simply select "Pretrained public models" tab in model selector.
 
 ### Settings:
 
