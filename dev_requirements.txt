@@ -1,5 +1,5 @@
 # git+https://github.com/supervisely/supervisely.git@optimize-index
-git+https://github.com/supervisely/supervisely.git@update-libs
+git+https://github.com/supervisely/supervisely.git@protobuf-dependencies-update
 # supervisely==6.73.203
 jsonschema==4.19.2
 networkx==3.1
