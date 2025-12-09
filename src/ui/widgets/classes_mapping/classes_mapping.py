@@ -5,6 +5,7 @@ from supervisely.app import DataJson, StateJson
 
 from supervisely.geometry.bitmap import Bitmap
 from supervisely.geometry.cuboid import Cuboid
+from supervisely.geometry.oriented_bbox import OrientedBBox
 from supervisely.geometry.point import Point
 from supervisely.geometry.polygon import Polygon
 from supervisely.geometry.polyline import Polyline
@@ -32,6 +33,7 @@ type_to_shape_text = {
     Point3d: "point 3d",  # "zmdi zmdi-select-all"
     GraphNodes: "keypoints",
     ClosedSurfaceMesh: "volume (3d mask)",
+    OrientedBBox: "oriented bbox",
 }
 
 
