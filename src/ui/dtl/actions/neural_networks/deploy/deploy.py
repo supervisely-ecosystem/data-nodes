@@ -34,6 +34,7 @@ from src.ui.dtl.actions.neural_networks.deploy.layout.pretrained_models import (
     deim as pretrained_deim,
 )
 
+
 class DeployBaseAction(DeployNNAction):
     name = "deploy_base"
     title = "Deploy Base"
@@ -371,10 +372,11 @@ class DeployYOLOV8Action(DeployBaseAction):
     artifacts = YOLOv8(g.TEAM_ID)
     pretrained_models = pretrained_yolov8
 
+
 class DeployYOLOAction(DeployBaseAction):
     name = "deploy_yolo"
-    title = "Deploy YOLO v8 - v12"
-    description = "Deploy YOLO v8 - v12 models."
+    title = "Deploy YOLO v8 - v26"
+    description = "Deploy YOLO v8 - v26 models."
     md_description = DeployBaseAction.read_md_file(dirname(realpath(__file__)) + "/yolo.md")
     train_version = "v2"
 
@@ -385,6 +387,7 @@ class DeployYOLOAction(DeployBaseAction):
     artifacts = None
     pretrained_models = pretrained_yolo
     need_runtime_selector = True
+
 
 class DeployMMDetectionAction(DeployBaseAction):
     name = "deploy_mmdetection"
@@ -433,6 +436,7 @@ class DeployRTDETRAction(DeployBaseAction):
     pretrained_models = pretrained_rtdetr
     need_runtime_selector = True
 
+
 class DeployRTDETRv2Action(DeployBaseAction):
     name = "deploy_rtdetrv2"
     title = "Deploy RT-DETRv2"
@@ -448,6 +452,7 @@ class DeployRTDETRv2Action(DeployBaseAction):
     pretrained_models = pretrained_rtdetrv2
     need_runtime_selector = True
 
+
 class DeployDEIMAction(DeployBaseAction):
     name = "deploy_deim"
     title = "Deploy DEIM"
@@ -462,4 +467,3 @@ class DeployDEIMAction(DeployBaseAction):
     artifacts = None
     pretrained_models = pretrained_deim
     need_runtime_selector = True
-

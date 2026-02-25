@@ -14004,6 +14004,141 @@ rtdetrv2 = [
 
 yolo = [
     {
+        "model_name": "YOLO26n-det",
+        "Size (pixels)": "640",
+        "mAP": "40.9",
+        "params (M)": "2.4",
+        "FLOPs (B)": "5.4",
+        "meta": {
+            "task_type": "object detection",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26n.pt"
+            },
+        },
+    },
+    {
+        "model_name": "YOLO26s-det",
+        "Size (pixels)": "640",
+        "mAP": "48.6",
+        "params (M)": "9.5",
+        "FLOPs (B)": "20.7",
+        "meta": {
+            "task_type": "object detection",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26s.pt"
+            },
+        },
+    },
+    {
+        "model_name": "YOLO26m-det",
+        "Size (pixels)": "640",
+        "mAP": "53.1",
+        "params (M)": "20.4",
+        "FLOPs (B)": "68.2",
+        "meta": {
+            "task_type": "object detection",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26m.pt"
+            },
+        },
+    },
+    {
+        "model_name": "YOLO26l-det",
+        "Size (pixels)": "640",
+        "mAP": "55.0",
+        "params (M)": "24.8",
+        "FLOPs (B)": "86.4",
+        "meta": {
+            "task_type": "object detection",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26l.pt"
+            },
+        },
+    },
+    {
+        "model_name": "YOLO26x-det",
+        "Size (pixels)": "640",
+        "mAP": "57.5",
+        "params (M)": "55.7",
+        "FLOPs (B)": "193.9",
+        "meta": {
+            "task_type": "object detection",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26x.pt"
+            },
+        },
+    },
+    {
+        "model_name": "YOLO26n-seg",
+        "Size (pixels)": "640",
+        "mAP (box)": "39.6",
+        "mAP (mask)": "33.9",
+        "params (M)": "2.7",
+        "FLOPs (B)": "9.1",
+        "meta": {
+            "task_type": "instance segmentation",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26n-seg.pt"
+            },
+        },
+    },
+    {
+        "model_name": "YOLO26s-seg",
+        "Size (pixels)": "640",
+        "mAP (box)": "47.3",
+        "mAP (mask)": "40.0",
+        "params (M)": "10.4",
+        "FLOPs (B)": "34.2",
+        "meta": {
+            "task_type": "instance segmentation",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26s-seg.pt"
+            },
+        },
+    },
+    {
+        "model_name": "YOLO26m-seg",
+        "Size (pixels)": "640",
+        "mAP (box)": "52.5",
+        "mAP (mask)": "44.1",
+        "params (M)": "23.6",
+        "FLOPs (B)": "121.5",
+        "meta": {
+            "task_type": "instance segmentation",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26m-seg.pt"
+            },
+        },
+    },
+    {
+        "model_name": "YOLO26l-seg",
+        "Size (pixels)": "640",
+        "mAP (box)": "54.4",
+        "mAP (mask)": "45.5",
+        "params (M)": "28.0",
+        "FLOPs (B)": "139.8",
+        "meta": {
+            "task_type": "instance segmentation",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26l-seg.pt"
+            },
+        },
+    },
+    {
+        "model_name": "YOLO26x-seg",
+        "Size (pixels)": "640",
+        "mAP (box)": "56.5",
+        "mAP (mask)": "47.0",
+        "params (M)": "62.8",
+        "FLOPs (B)": "313.5",
+        "meta": {
+            "task_type": "instance segmentation",
+            "model_files": {
+                "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26x-seg.pt"
+            },
+        },
+    },
+    {
         "model_name": "YOLO12n",
         "Size (pixels)": "640",
         "mAP": "40.6",
@@ -14013,8 +14148,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12n.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO12s",
@@ -14026,8 +14161,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12s.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO12m",
@@ -14039,8 +14174,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12m.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO12l",
@@ -14052,8 +14187,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12l.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO12x",
@@ -14065,8 +14200,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12x.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11n-det",
@@ -14078,8 +14213,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11s-det",
@@ -14091,8 +14226,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11s.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11m-det",
@@ -14104,8 +14239,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11m.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11l-det",
@@ -14117,8 +14252,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11l.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11x-det",
@@ -14130,8 +14265,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11x.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11n-seg",
@@ -14144,8 +14279,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11s-seg",
@@ -14158,8 +14293,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11s-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11m-seg",
@@ -14172,8 +14307,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11m-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11l-seg",
@@ -14186,8 +14321,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11l-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLO11x-seg",
@@ -14200,8 +14335,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11x-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv10n-det",
@@ -14213,8 +14348,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov10n.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv10s-det",
@@ -14226,8 +14361,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov10s.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv10m-det",
@@ -14239,8 +14374,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov10m.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv10l-det",
@@ -14252,8 +14387,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov10l.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv10x-det",
@@ -14265,8 +14400,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov10x.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv9c-det",
@@ -14278,8 +14413,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov9c.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv9e-det",
@@ -14291,8 +14426,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov9e.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv9c-seg",
@@ -14305,8 +14440,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov9c-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv9e-seg",
@@ -14319,8 +14454,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov9e-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8n-det (COCO)",
@@ -14332,8 +14467,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8n.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8n-det (Open Images V7)",
@@ -14345,8 +14480,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8n-oiv7.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8s-det (COCO)",
@@ -14358,8 +14493,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8s.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8s-det (Open Images V7)",
@@ -14371,8 +14506,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8s-oiv7.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8m-det (COCO)",
@@ -14384,8 +14519,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8m.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8m-det (Open Images V7)",
@@ -14397,8 +14532,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8m-oiv7.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8l-det (COCO)",
@@ -14410,8 +14545,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8l.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8l-det (Open Images V7)",
@@ -14423,8 +14558,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8l-oiv7.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8x-det (COCO)",
@@ -14436,8 +14571,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8x.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8x-det (Open Images V7)",
@@ -14449,8 +14584,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8x-oiv7.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8n-seg",
@@ -14463,8 +14598,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8n-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8s-seg",
@@ -14477,8 +14612,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8s-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8m-seg",
@@ -14491,8 +14626,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8m-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8l-seg",
@@ -14505,8 +14640,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8l-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv8x-seg",
@@ -14519,8 +14654,8 @@ yolo = [
             "task_type": "instance segmentation",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8x-seg.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5nu",
@@ -14532,8 +14667,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5nu.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5su",
@@ -14545,21 +14680,21 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5su.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5mu",
         "Size (pixels)": "640",
-        "mAP": "59.0",
+        "mAP": "49.0",
         "params (M)": "25.1",
         "FLOPs (B)": "64.2",
         "meta": {
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5mu.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5lu",
@@ -14571,8 +14706,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5lu.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5xu",
@@ -14584,8 +14719,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5xu.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5n6u",
@@ -14597,8 +14732,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5n6u.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5s6u",
@@ -14610,8 +14745,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5s6u.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5m6u",
@@ -14623,8 +14758,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5m6u.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5l6u",
@@ -14636,8 +14771,8 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5l6u.pt"
-            }
-        }
+            },
+        },
     },
     {
         "model_name": "YOLOv5x6u",
@@ -14649,9 +14784,9 @@ yolo = [
             "task_type": "object detection",
             "model_files": {
                 "checkpoint": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov5x6u.pt"
-            }
-        }
-    }
+            },
+        },
+    },
 ]
 
 deim = [
@@ -14667,9 +14802,9 @@ deim = [
             "model_name": "DEIM D-FINE-N",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_dfine_hgnetv2_n_coco_160e.pth",
-                "config": "deim_hgnetv2_n_coco.yml"
-            }
-        }
+                "config": "deim_hgnetv2_n_coco.yml",
+            },
+        },
     },
     {
         "Model": "DEIM D-FINE-S",
@@ -14683,9 +14818,9 @@ deim = [
             "model_name": "DEIM D-FINE-S",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_dfine_hgnetv2_s_coco_120e.pth",
-                "config": "deim_hgnetv2_s_coco.yml"
-            }
-        }
+                "config": "deim_hgnetv2_s_coco.yml",
+            },
+        },
     },
     {
         "Model": "DEIM D-FINE-M",
@@ -14699,9 +14834,9 @@ deim = [
             "model_name": "DEIM D-FINE-M",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_dfine_hgnetv2_m_coco_90e.pth",
-                "config": "deim_hgnetv2_m_coco.yml"
-            }
-        }
+                "config": "deim_hgnetv2_m_coco.yml",
+            },
+        },
     },
     {
         "Model": "DEIM D-FINE-L",
@@ -14715,9 +14850,9 @@ deim = [
             "model_name": "DEIM D-FINE-L",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_dfine_hgnetv2_l_coco_50e.pth",
-                "config": "deim_hgnetv2_l_coco.yml"
-            }
-        }
+                "config": "deim_hgnetv2_l_coco.yml",
+            },
+        },
     },
     {
         "Model": "DEIM D-FINE-X",
@@ -14731,9 +14866,9 @@ deim = [
             "model_name": "DEIM D-FINE-X",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_dfine_hgnetv2_x_coco_50e.pth",
-                "config": "deim_hgnetv2_x_coco.yml"
-            }
-        }
+                "config": "deim_hgnetv2_x_coco.yml",
+            },
+        },
     },
     {
         "Model": "DEIM RT-DETRv2-S",
@@ -14747,9 +14882,9 @@ deim = [
             "model_name": "DEIM RT-DETRv2-S",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_rtdetrv2_r18vd_coco_120e.pth",
-                "config": "deim_r18vd_120e_coco.yml"
-            }
-        }
+                "config": "deim_r18vd_120e_coco.yml",
+            },
+        },
     },
     {
         "Model": "DEIM RT-DETRv2-M",
@@ -14763,9 +14898,9 @@ deim = [
             "model_name": "DEIM RT-DETRv2-M",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_rtdetrv2_r34vd_coco_120e.pth",
-                "config": "deim_r34vd_120e_coco.yml"
-            }
-        }
+                "config": "deim_r34vd_120e_coco.yml",
+            },
+        },
     },
     {
         "Model": "DEIM RT-DETRv2-M*",
@@ -14779,9 +14914,9 @@ deim = [
             "model_name": "DEIM RT-DETRv2-M*",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_rtdetrv2_r50vd_m_coco_60e.pth",
-                "config": "deim_r50vd_m_60e_coco.yml"
-            }
-        }
+                "config": "deim_r50vd_m_60e_coco.yml",
+            },
+        },
     },
     {
         "Model": "DEIM RT-DETRv2-L",
@@ -14795,9 +14930,9 @@ deim = [
             "model_name": "DEIM RT-DETRv2-L",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_rtdetrv2_r50vd_coco_60e.pth",
-                "config": "deim_r50vd_60e_coco.yml"
-            }
-        }
+                "config": "deim_r50vd_60e_coco.yml",
+            },
+        },
     },
     {
         "Model": "DEIM RT-DETRv2-X",
@@ -14811,8 +14946,8 @@ deim = [
             "model_name": "DEIM RT-DETRv2-X",
             "model_files": {
                 "checkpoint": "https://github.com/supervisely-ecosystem/deim/releases/download/v0.0.1/deim_rtdetrv2_r101vd_coco_60e.pth",
-                "config": "deim_r101vd_60e_coco.yml"
-            }
-        }
-    }
+                "config": "deim_r101vd_60e_coco.yml",
+            },
+        },
+    },
 ]
