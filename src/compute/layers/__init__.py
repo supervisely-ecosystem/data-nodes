@@ -1,11 +1,22 @@
 import inspect
 import pkgutil
 
+import numpy as np
+
 from src.compute.Layer import Layer
 
-from src.compute.layers import data
-from src.compute.layers import processing
-from src.compute.layers import save
+if not hasattr(np, "sctypes"):
+    np.sctypes = {
+        "int": [np.int8, np.int16, np.int32, np.int64],
+        "uint": [np.uint8, np.uint16, np.uint32, np.uint64],
+        "float": [np.float16, np.float32, np.float64, np.longdouble],
+        "complex": [np.complex64, np.complex128, np.clongdouble],
+        "others": [np.bool_, np.object_, np.str_, np.bytes_, np.void],
+        "datetime": [np.datetime64],
+        "timedelta": [np.timedelta64],
+    }
+
+from src.compute.layers import data, processing, save
 
 
 def register_layers(package, type):
