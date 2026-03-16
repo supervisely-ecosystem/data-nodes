@@ -249,7 +249,7 @@ def set_model_apply_method_from_json(settings: dict, apply_nn_methods_selector: 
 
 def set_batch_size_from_json(settings: dict, batch_size_input: InputNumber) -> None:
     batch_size = settings.get("batch_size", 50)
-    batch_size_input.set_value(batch_size)
+    batch_size_input.value = batch_size
 
 
 ### -----------------------------
@@ -260,6 +260,7 @@ def set_model_preview(model_info: dict, connect_nn_model_preview: Text) -> None:
     model_name = model_info.get("app_name", "Couldn't get model name")
     model_name_w_link = f'<a href="{g.api.server_address}{g.api.app.get_url(model_info["session_id"])}" target="_blank">{model_name}</a>'
     connect_nn_model_preview.set(model_name_w_link, "text")
+
 
 def set_model_settings_preview(
     model_suffix_input: Input,
@@ -295,6 +296,7 @@ def set_model_settings_preview(
     ignore_labeled_preview.show()
     apply_method_preview.show()
     batch_size_preview.show()
+
 
 ### -----------------------------
 
@@ -385,7 +387,7 @@ def set_default_model_settings(
     session_id: int,
     model_suffix_input: Input,
     add_suffix_method_selector: Select,
-    resolve_conflict_method_selector,
+    resolve_conflict_method_selector: Select,
     apply_nn_methods_selector: Select,
     inf_settings_editor: Editor,
     connect_nn_model_preview: Text,
