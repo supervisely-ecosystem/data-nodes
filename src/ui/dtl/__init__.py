@@ -159,6 +159,7 @@ from .actions.spatial_level_transforms.instances_crop.instances_crop import (
     InstancesCropAction,
 )
 from .actions.spatial_level_transforms.multiply.multiply import MultiplyAction
+from .actions.spatial_level_transforms.orientation.orientation import OrientationAction
 from .actions.spatial_level_transforms.resize.resize import ResizeAction
 from .actions.spatial_level_transforms.rotate.rotate import RotateAction
 from .actions.spatial_level_transforms.sliding_window.sliding_window import (
@@ -200,6 +201,7 @@ image_actions_list = {
         FlipAction.name,
         InstancesCropAction.name,
         MultiplyAction.name,
+        OrientationAction.name,
         ResizeAction.name,
         RotateAction.name,
         SlidingWindowAction.name,
@@ -291,6 +293,7 @@ image_actions_dict = {
     FlipAction.name: FlipAction,
     InstancesCropAction.name: InstancesCropAction,
     MultiplyAction.name: MultiplyAction,
+    OrientationAction.name: OrientationAction,
     ResizeAction.name: ResizeAction,
     RotateAction.name: RotateAction,
     SlidingWindowAction.name: SlidingWindowAction,
