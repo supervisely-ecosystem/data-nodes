@@ -39,6 +39,9 @@ from .actions.annotation_transforms.duplicate_objects.duplicate_objects import (
 from .actions.annotation_transforms.image_tag.image_tag import ImageTagAction
 from .actions.annotation_transforms.line_to_mask.line_to_mask import LineToMaskAction
 from .actions.annotation_transforms.mask_to_lines.mask_to_lines import MaskToLinesAction
+from .actions.annotation_transforms.mask_morphology.mask_morphology import (
+    MaskMorphologyAction,
+)
 from .actions.annotation_transforms.mask_to_polygon.mask_to_polygon import (
     MaskToPolygonAction,
 )
@@ -228,6 +231,7 @@ image_actions_list = {
         DropLinesByLengthAction.name,
         DropNoiseAction.name,
         DuplicateObjectsAction.name,
+        MaskMorphologyAction.name,
         MaskToPolygonAction.name,
         LineToMaskAction.name,
         MergeMasksAction.name,
@@ -318,6 +322,7 @@ image_actions_dict = {
     DropLinesByLengthAction.name: DropLinesByLengthAction,
     DropNoiseAction.name: DropNoiseAction,
     DuplicateObjectsAction.name: DuplicateObjectsAction,
+    MaskMorphologyAction.name: MaskMorphologyAction,
     MaskToPolygonAction.name: MaskToPolygonAction,
     LineToMaskAction.name: LineToMaskAction,
     MergeMasksAction.name: MergeMasksAction,
