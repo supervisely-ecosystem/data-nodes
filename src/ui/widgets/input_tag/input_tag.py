@@ -3,7 +3,7 @@ from supervisely.annotation.tag import Tag
 from supervisely.annotation.tag_meta import TagMeta, TagValueType
 from supervisely.app.widgets import Widget
 from supervisely.app.widgets import (
-    DatePicker,
+    DateTimePicker,
     Empty,
     Input,
     InputNumber,
@@ -65,7 +65,7 @@ class InputTag(Widget):
         self._input_widgets[str(TagValueType.NONE)] = Empty()
         self._input_widgets[str(TagValueType.ANY_NUMBER)] = InputNumber(debounce=500)
         self._input_widgets[str(TagValueType.ANY_STRING)] = Input(size="small")
-        self._input_widgets[str(TagValueType.DATE)] = DatePicker(size="small")
+        self._input_widgets[str(TagValueType.DATE)] = DateTimePicker(size="small")
         self._input_widgets[str(TagValueType.ONEOF_STRING)] = RadioGroup(items=[])
 
     def _get_max_width(self, value):
@@ -112,7 +112,7 @@ class InputTag(Widget):
             input_widget.value = value
         if isinstance(input_widget, Input):
             input_widget.set_value(value)
-        if isinstance(input_widget, DatePicker):
+        if isinstance(input_widget, DateTimePicker):
             input_widget.set_value(value)
         if isinstance(input_widget, RadioGroup):
             input_widget.set_value(value)
@@ -123,8 +123,8 @@ class InputTag(Widget):
             input_widget.value = 0
         if isinstance(input_widget, Input):
             input_widget.set_value("")
-        if isinstance(input_widget, DatePicker):
-            input_widget.clear_value()
+        if isinstance(input_widget, DateTimePicker):
+            input_widget.set_value("")
         if isinstance(input_widget, RadioGroup):
             input_widget.set_value(None)
 
