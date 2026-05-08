@@ -1,4 +1,4 @@
-FROM supervisely/base-py-sdk:6.73.486
+FROM supervisely/base-py-sdk:6.73.564
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y
@@ -15,6 +15,6 @@ RUN pip3 install --no-cache-dir jsonschema==4.19.2 \
     imgaug==0.4.0 \
     imagecorruptions==1.1.2
 
-RUN pip3 install --no-cache-dir supervisely==6.73.486
+RUN pip3 install --no-cache-dir supervisely==6.73.564
 
-LABEL python_sdk_version=6.73.486
+LABEL python_sdk_version=6.73.564

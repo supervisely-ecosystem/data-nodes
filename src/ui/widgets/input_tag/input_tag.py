@@ -2,7 +2,15 @@ from typing import Dict, Union
 from supervisely.annotation.tag import Tag
 from supervisely.annotation.tag_meta import TagMeta, TagValueType
 from supervisely.app.widgets import Widget
-from supervisely.app.widgets import Empty, Input, InputNumber, RadioGroup, OneOf, Select
+from supervisely.app.widgets import (
+    DateTimePicker,
+    Empty,
+    Input,
+    InputNumber,
+    OneOf,
+    RadioGroup,
+    Select,
+)
 
 
 VALUE_TYPE_NAME = {
@@ -10,6 +18,7 @@ VALUE_TYPE_NAME = {
     str(TagValueType.ANY_STRING): "TEXT",
     str(TagValueType.ONEOF_STRING): "ONE OF",
     str(TagValueType.ANY_NUMBER): "NUMBER",
+    str(TagValueType.DATE): "DATE",
 }
 
 VALUE_TYPES = [
@@ -17,6 +26,7 @@ VALUE_TYPES = [
     str(TagValueType.ANY_NUMBER),
     str(TagValueType.ANY_STRING),
     str(TagValueType.ONEOF_STRING),
+    str(TagValueType.DATE),
 ]
 
 
@@ -55,6 +65,7 @@ class InputTag(Widget):
         self._input_widgets[str(TagValueType.NONE)] = Empty()
         self._input_widgets[str(TagValueType.ANY_NUMBER)] = InputNumber(debounce=500)
         self._input_widgets[str(TagValueType.ANY_STRING)] = Input(size="small")
+        self._input_widgets[str(TagValueType.DATE)] = DateTimePicker(size="small")
         self._input_widgets[str(TagValueType.ONEOF_STRING)] = RadioGroup(items=[])
 
     def _get_max_width(self, value):
@@ -101,6 +112,8 @@ class InputTag(Widget):
             input_widget.value = value
         if isinstance(input_widget, Input):
             input_widget.set_value(value)
+        if isinstance(input_widget, DateTimePicker):
+            input_widget.set_value(value)
         if isinstance(input_widget, RadioGroup):
             input_widget.set_value(value)
 
@@ -109,6 +122,8 @@ class InputTag(Widget):
         if isinstance(input_widget, InputNumber):
             input_widget.value = 0
         if isinstance(input_widget, Input):
+            input_widget.set_value("")
+        if isinstance(input_widget, DateTimePicker):
             input_widget.set_value("")
         if isinstance(input_widget, RadioGroup):
             input_widget.set_value(None)
