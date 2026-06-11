@@ -236,10 +236,10 @@ def ExtractCrackNets4(
             if bbox_area / target_area < min_poly_bbox_area_coef:
                 continue
 
-            cluster = np.array(cluster, np.float)
+            cluster = np.array(cluster, float)
             cluster[:, 0] = cluster[:, 0] / width_coef
             cluster[:, 1] = cluster[:, 1] / heigh_coef
-            cluster = cluster.astype(np.int)
+            cluster = cluster.astype(int)
 
             c_exterior = cluster.tolist()
             poly = ShPolygon(shell=c_exterior)
