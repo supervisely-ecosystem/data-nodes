@@ -24,6 +24,7 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 COPY ${REQUIREMENTS_FILE} /tmp/requirements.txt
+COPY vendor /tmp/vendor
 
 ARG CACHEBUST=""
 
@@ -32,7 +33,8 @@ RUN set -eux; \
     /opt/venv/bin/python -m ensurepip --upgrade; \
     /opt/venv/bin/python -m pip install --no-cache-dir --upgrade pip wheel setuptools; \
     if [ -s /tmp/requirements.txt ]; then \
-        /opt/venv/bin/python -m pip wheel --prefer-binary --no-cache-dir -r /tmp/requirements.txt -w /tmp/wheels; \
+        cd /tmp; \
+        /opt/venv/bin/python -m pip wheel --prefer-binary --no-cache-dir -r requirements.txt -w /tmp/wheels; \
     else \
         mkdir -p /tmp/wheels; \
     fi
