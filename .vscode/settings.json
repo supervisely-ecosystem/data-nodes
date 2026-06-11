@@ -46,6 +46,6 @@
         "editorOverviewRuler.warningForeground": "#ff9900",
         "minimap.warningHighlight": "#ff9900",
         "minimap.infoHighlight": "#00a8aa",
-        "editorOverviewRuler.infoForeground": "#00a8aa"        
+        "editorOverviewRuler.infoForeground": "#00a8aa"
     }
 }
