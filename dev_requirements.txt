@@ -9,5 +9,5 @@ cacheout==0.14.1
 markdown==3.8.1  # CVE-2025-69534 is fixed in 3.8.1.
 json2html==1.3.0
 moviepy==1.0.3
-./vendor/imgaug-patched  # Patched local fork disables deprecated vulnerable BackgroundAugmenter path.
+imgaug==0.4.0  # App startup disables deprecated BatchLoader/BackgroundAugmenter paths.
 imagecorruptions==1.1.2
