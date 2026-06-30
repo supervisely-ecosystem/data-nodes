@@ -18,17 +18,28 @@ SUPPORTED_ENTITY_FILTER_TYPES = [
 ]
 
 
-def _format_filter_types(filters: List[Dict]):
-    return ", ".join(str(filter.get("type")) for filter in filters)
+def _format_filter_types(filter_types: List[str]):
+    return ", ".join(str(filter_type) for filter_type in filter_types)
+
+
+def _get_unsupported_filter_types(filters: List[Dict]):
+    return [
+        filter.get("type")
+        for filter in filters
+        if filter.get("type") not in SUPPORTED_ENTITY_FILTER_TYPES
+    ]
 
 
 def _get_filtered_list(api: Api, filters: List[Dict], **kwargs):
     try:
         return api.image.get_filtered_list(filters=filters, **kwargs)
     except ValueError as exc:
+        unsupported_filter_types = _get_unsupported_filter_types(filters)
+        if len(unsupported_filter_types) == 0:
+            unsupported_filter_types = [filter.get("type") for filter in filters]
         raise ValueError(
             "Received unsupported image filter(s): "
-            f"{_format_filter_types(filters)}. Supported filters are: "
+            f"{_format_filter_types(unsupported_filter_types)}. Supported filters are: "
             f"{', '.join(SUPPORTED_ENTITY_FILTER_TYPES)}"
         ) from exc
 
