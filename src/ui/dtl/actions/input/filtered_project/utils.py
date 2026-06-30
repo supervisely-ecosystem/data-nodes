@@ -1,6 +1,26 @@
+from typing import Dict, List
+
 import pandas as pd
-from typing import List
+
 from supervisely import Api, ImageInfo, ProjectInfo
+
+
+def _get_filtered_images(api: Api, project_id: int, dataset_id: int, filters: List[Dict]):
+    if any(filter.get("type") == "entities_collection" for filter in filters):
+        filtered_images = api.image.get_filtered_list(project_id=project_id, filters=filters)
+        if dataset_id is not None:
+            filtered_images = [image for image in filtered_images if image.dataset_id == dataset_id]
+        return filtered_images
+
+    if dataset_id is not None:
+        datasets = [api.dataset.get_info_by_id(dataset_id)]
+    else:
+        datasets = api.dataset.get_list(project_id)
+
+    filtered_images = []
+    for dataset in datasets:
+        filtered_images.extend(api.image.get_filtered_list(dataset.id, filters))
+    return filtered_images
 
 
 def build_filtered_table(
@@ -51,14 +71,7 @@ def generate_project_description(
         f"{len(filtered_entities)} {project_info.type} selected via filters"
     )
     if len(filtered_entities) == 0 and len(entities_filters) > 0:
-        if dataset_id is not None:
-            datasets = [api.dataset.get_info_by_id(dataset_id)]
-        else:
-            datasets = api.dataset.get_list(project_id)
-
-        filtered_images = []
-        for dataset in datasets:
-            filtered_images.extend(api.image.get_filtered_list(dataset.id, entities_filters))
+        filtered_images = _get_filtered_images(api, project_id, dataset_id, entities_filters)
 
         filtered_project_description = (
             f"{len(filtered_images)} {project_info.type} selected via filters"
