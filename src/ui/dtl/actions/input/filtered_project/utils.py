@@ -5,9 +5,37 @@ import pandas as pd
 from supervisely import Api, ImageInfo, ProjectInfo
 
 
+SUPPORTED_ENTITY_FILTER_TYPES = [
+    "images_filename",
+    "images_tag",
+    "objects_tag",
+    "objects_class",
+    "objects_annotator",
+    "tagged_by_annotator",
+    "issues_count",
+    "job",
+    "entities_collection",
+]
+
+
+def _format_filter_types(filters: List[Dict]):
+    return ", ".join(str(filter.get("type")) for filter in filters)
+
+
+def _get_filtered_list(api: Api, filters: List[Dict], **kwargs):
+    try:
+        return api.image.get_filtered_list(filters=filters, **kwargs)
+    except ValueError as exc:
+        raise ValueError(
+            "Received unsupported image filter(s): "
+            f"{_format_filter_types(filters)}. Supported filters are: "
+            f"{', '.join(SUPPORTED_ENTITY_FILTER_TYPES)}"
+        ) from exc
+
+
 def _get_filtered_images(api: Api, project_id: int, dataset_id: int, filters: List[Dict]):
     if any(filter.get("type") == "entities_collection" for filter in filters):
-        filtered_images = api.image.get_filtered_list(project_id=project_id, filters=filters)
+        filtered_images = _get_filtered_list(api, filters, project_id=project_id)
         if dataset_id is not None:
             filtered_images = [image for image in filtered_images if image.dataset_id == dataset_id]
         return filtered_images
@@ -19,7 +47,7 @@ def _get_filtered_images(api: Api, project_id: int, dataset_id: int, filters: Li
 
     filtered_images = []
     for dataset in datasets:
-        filtered_images.extend(api.image.get_filtered_list(dataset.id, filters))
+        filtered_images.extend(_get_filtered_list(api, filters, dataset_id=dataset.id))
     return filtered_images
 
 

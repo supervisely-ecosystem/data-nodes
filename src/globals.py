@@ -71,10 +71,37 @@ PRESETS_PATH = os.path.join("/" + TEAM_FILES_PATH + "/presets", MODALITY_TYPE)
 PIPELINE_TEMPLATE = os.getenv("modal.state.pipelineTemplate", None)
 FILTERED_ENTITIES = []
 ENTITIES_FILTERS = []
+SUPPORTED_ENTITY_FILTER_TYPES = [
+    "images_filename",
+    "images_tag",
+    "objects_tag",
+    "objects_class",
+    "objects_annotator",
+    "tagged_by_annotator",
+    "issues_count",
+    "job",
+    "entities_collection",
+]
+
+
+def _format_filter_types(filters):
+    return ", ".join(str(filter.get("type")) for filter in filters)
+
+
+def _get_filtered_list(filters, **kwargs):
+    try:
+        return api.image.get_filtered_list(filters=filters, **kwargs)
+    except ValueError as exc:
+        raise ValueError(
+            "Received unsupported image filter(s): "
+            f"{_format_filter_types(filters)}. Supported filters are: "
+            f"{', '.join(SUPPORTED_ENTITY_FILTER_TYPES)}"
+        ) from exc
+
 
 def _get_filtered_entities(project_id, dataset_id, filters):
     if any(filter.get("type") == "entities_collection" for filter in filters):
-        filtered_entities = api.image.get_filtered_list(project_id=project_id, filters=filters)
+        filtered_entities = _get_filtered_list(filters, project_id=project_id)
         if dataset_id is not None:
             filtered_entities = [
                 entity for entity in filtered_entities if entity.dataset_id == dataset_id
@@ -88,7 +115,7 @@ def _get_filtered_entities(project_id, dataset_id, filters):
 
     filtered_entities = []
     for dataset in datasets:
-        filtered_entities.extend(api.image.get_filtered_list(dataset.id, filters))
+        filtered_entities.extend(_get_filtered_list(filters, dataset_id=dataset.id))
     return filtered_entities
 
 
