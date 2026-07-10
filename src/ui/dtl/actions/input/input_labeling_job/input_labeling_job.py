@@ -71,9 +71,14 @@ class InputLabelingJobAction(SourceAction):
             nonlocal _current_meta, _current_info, saved_src, saved_settings
             job_id = lj_selector_sidebar_selector.get_value()
             if not isinstance(job_id, int):
-                raise RuntimeError(
-                    f"Job id must be an integer, not {type(job_id).__name__}. Labeling job id value: {job_id}"
-                )
+                lj_selector_preview_lj_status.hide()
+                lj_selector_preview_lj_progress.hide()
+                lj_selector_preview_lj_dataset_thumbnail.hide()
+                lj_selector_preview_classes.set([])
+                lj_selector_preview_tags.set([])
+                lj_selector_preview_lj_text.set("Select a Labeling Job before saving", "warning")
+                update_preview_btn.disable()
+                return
             job_info = g.api.labeling_job.get_info_by_id(job_id)
 
             project_info = g.api.project.get_info_by_id(job_info.project_id)
