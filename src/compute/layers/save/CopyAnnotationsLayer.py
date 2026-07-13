@@ -257,53 +257,51 @@ class CopyAnnotationsLayer(Layer):
         for input_project_id in input_projects_map:
             datasets = input_projects_map[input_project_id]
             for dataset in datasets:
-                if (
-                    dataset.name in list(destination_ds_map.keys())
-                    or len(self.settings["dataset_ids"]) == 1
-                ):
-                    total_ds_images = dataset.items_count
-                    input_images = g.api.image.get_list(dataset.id)
+                if is_single_input_ds:
+                    matching_destination_datasets = destination_dataset_infos
+                else:
+                    destination_ds = destination_ds_map.get(dataset.name)
+                    if destination_ds is None:
+                        sly.logger.warn(
+                            f"Destination project does not have dataset '{dataset.name}'. Skipping..."
+                        )
+                        continue
+                    matching_destination_datasets = [destination_ds]
 
-                    if len(self.settings["dataset_ids"]) == 1 and is_single_input_ds:
-                        destination_images = g.api.image.get_list(self.settings["dataset_ids"][0])
-                    else:
-                        destination_ds = destination_ds_map.get(dataset.name)
-                        if destination_ds is not None:
-                            destination_images = g.api.image.get_list(
-                                destination_ds_map[dataset.name].id
-                            )
-                        else:
-                            sly.logger.warn(
-                                f"Destination project does not have dataset '{dataset.name}'. Skipping..."
-                            )
-                            continue
+                datasets_matches += len(matching_destination_datasets)
 
-                    strict_match = self.settings.get("strict_match", False)
+                total_ds_images = dataset.items_count
+                input_images = g.api.image.get_list(dataset.id)
+                strict_match = self.settings.get("strict_match", False)
+
+                for destination_ds in matching_destination_datasets:
+                    destination_images = g.api.image.get_list(destination_ds.id)
                     matched_images = map_matching_images_by_name(
                         input_images, destination_images, strict_match
                     )
                     if len(matched_images) == 0:
                         sly.logger.warn(
-                            f"Dataset '{dataset.name}' (ID '{dataset.id}') has no matching images. Skipping..."
+                            (
+                                f"Dataset '{dataset.name}' (ID '{dataset.id}') has no matching images "
+                                f"in destination dataset '{destination_ds.name}' (ID '{destination_ds.id}'). "
+                                "Skipping..."
+                            )
                         )
                         continue
 
                     if total_ds_images != len(matched_images):
                         sly.logger.warn(
-                            f"Some images from Dataset '{dataset.name}' couldn't be matched"
+                            (
+                                f"Some images from Dataset '{dataset.name}' couldn't be matched "
+                                f"in destination dataset '{destination_ds.name}'"
+                            )
                         )
 
-                    if self.ds_map.get(dataset.id) is not None:
-                        self.ds_map[dataset.id].update(matched_images)
-                    else:
-                        if len(matched_images) > 0:
-                            self.ds_map[dataset.id] = matched_images
-                    datasets_matches += 1
-                else:
-                    sly.logger.warn(
-                        f"Destination project does not have dataset '{dataset.name}'. Skipping..."
-                    )
-                    continue
+                    source_ds_map = self.ds_map.setdefault(dataset.id, defaultdict(list))
+                    for source_image_id, destination_image_id in matched_images.items():
+                        source_ds_map[source_image_id].append(
+                            (destination_ds.id, destination_image_id)
+                        )
 
         if datasets_matches == 0:
             raise ValueError(
@@ -332,10 +330,10 @@ class CopyAnnotationsLayer(Layer):
                     local_item_size = item_desc.item_data.shape[:2]
                 dataset_id = item_desc.info.item_info.dataset_id
                 image_id = item_desc.info.item_info.id
-                destination_images_ids = self.ds_map.get(dataset_id)
-                if destination_images_ids is not None:
-                    destination_image_id = destination_images_ids.get(image_id)
-                    if destination_image_id is not None:
+                destination_images = self.ds_map.get(dataset_id)
+                if destination_images is not None:
+                    destination_image_infos = destination_images.get(image_id, [])
+                    if len(destination_image_infos) > 0:
                         original_image_size = (
                             item_desc.info.item_info.height,
                             item_desc.info.item_info.width,
@@ -352,30 +350,35 @@ class CopyAnnotationsLayer(Layer):
                             )
                             continue
                         else:
-                            dst_item_id_map[dataset_id].append(destination_image_id)
-                            dst_item_ann_map[dataset_id].append(ann)
+                            for (
+                                destination_dataset_id,
+                                destination_image_id,
+                            ) in destination_image_infos:
+                                dst_item_id_map[destination_dataset_id].append(
+                                    destination_image_id
+                                )
+                                dst_item_ann_map[destination_dataset_id].append(ann)
 
-            for dataset_id in dst_item_id_map:
-                destination_images_ids = dst_item_id_map[dataset_id]
-                image_anns = dst_item_ann_map[dataset_id]
+            for destination_dataset_id in dst_item_id_map:
+                destination_images_ids = dst_item_id_map[destination_dataset_id]
+                image_anns = dst_item_ann_map[destination_dataset_id]
 
                 add_option = self.settings["add_option"]
                 if add_option == "merge":
                     ann_jsons = g.api.annotation.download_json_batch(
-                        dataset_id, destination_images_ids
+                        destination_dataset_id, destination_images_ids
                     )
                     destination_anns = [
                         Annotation.from_json(ann_json, self.output_meta) for ann_json in ann_jsons
                     ]
-                    anns = [
+                    upload_anns = [
                         ann.merge(destination_ann)
                         for ann, destination_ann in zip(image_anns, destination_anns)
                     ]
 
-                    g.api.annotation.upload_anns(destination_images_ids, anns)
+                    g.api.annotation.upload_anns(destination_images_ids, upload_anns)
                 else:
-                    anns = image_anns
-                    g.api.annotation.upload_anns(destination_images_ids, anns)
+                    g.api.annotation.upload_anns(destination_images_ids, image_anns)
 
             yield tuple(zip(item_descs, anns))
 
