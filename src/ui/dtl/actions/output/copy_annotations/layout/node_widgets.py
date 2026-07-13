@@ -38,7 +38,10 @@ def create_node_widgets():
 
     select_project_sidebar_dataset_selector_field = Field(
         title="Select destination project or dataset",
-        description="If multiple datasets are selected, only annotations from the datasets with the same names from the input project will be added",
+        description=(
+            "If the input contains one dataset, selected destination datasets are matched by image names. "
+            "If the input contains multiple datasets, destination dataset names must match input dataset names."
+        ),
         content=select_project_sidebar_dataset_selector,
     )
 
