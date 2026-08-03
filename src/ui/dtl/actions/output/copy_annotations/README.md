@@ -40,6 +40,8 @@
 
 * **Modifying Existing Annotations:** Annotation-only changes can be copied. If image size is modified in the pipeline, the node will not process those images because it only copies annotations and does not modify destination images.
 
+* **Duplicate Tags:** If `Multiple tags mode` is disabled in the destination project settings, only one tag with the same name is kept on an image and on an object. With the `Merge Annotations` option, the tag from the input project wins and the duplicate from the destination project is skipped. Every skipped tag is reported in the logs.
+
 * **Dealing with Duplicate Projects and the 'Replace' Option:** If you have two input projects that contain the same dataset names and identical images, and you choose the `Replace Annotations` option, the annotations from the second input project will overwrite the annotations from the first input project in the destination project. We don't recommend using the `Replace Annotations` option in this case.
 
 ### Settings

@@ -7,6 +7,7 @@ import supervisely.io.fs as sly_fs
 import supervisely.io.json as sly_json
 from src.compute.dtl_utils.item_descriptor import ImageDescriptor, VideoDescriptor
 from src.compute.Layer import Layer
+from src.compute.tags_utils import is_duplicate_tags_allowed, remove_duplicate_tags
 from src.exceptions import BadSettingsError
 from supervisely.io.fs import get_file_ext
 import src.globals as g
@@ -102,6 +103,7 @@ class CreateLabelingJobLayer(Layer):
         self.sly_project_info = None
         self._labeling_job_map = defaultdict(list)  # {"dataset_id": ["images_ids"]}
         self.created_labeling_jobs = []
+        self.allow_duplicate_tags = False
 
     def validate(self):
         if self.net.preview_mode:
@@ -193,6 +195,9 @@ class CreateLabelingJobLayer(Layer):
             self.sly_project_info = g.api.project.get_info_by_id(project_id, self.net.modality)
             # need custom data update?
 
+        if self.sly_project_info is not None:
+            self.allow_duplicate_tags = is_duplicate_tags_allowed(self.sly_project_info.id)
+
     def get_ds_parents(self, dataset_info: DatasetInfo):
         ds_parents = None
         for parents, dataset in g.api.dataset.tree(dataset_info.project_id):
@@ -256,7 +261,10 @@ class CreateLabelingJobLayer(Layer):
                             item_info = g.api.image.upload_id(
                                 dataset_info.id, out_item_name, item_desc.info.item_info.id
                             )
-                        g.api.annotation.upload_ann(item_info.id, ann)
+                        upload_anns = remove_duplicate_tags(
+                            [ann], [item_info.id], self.allow_duplicate_tags
+                        )
+                        g.api.annotation.upload_ann(item_info.id, upload_anns[0])
                     elif self.net.modality == "videos":
                         item_info = g.api.video.upload_path(
                             dataset_info.id, out_item_name, item_desc.item_data
@@ -336,10 +344,12 @@ class CreateLabelingJobLayer(Layer):
                             # @TODO: BATCH UPLOAD
                             # for item_info, (_, ann) in zip(item_infos, ds_item_map[dataset_name]):
                             #     g.api.annotation.upload_ann(item_info.id, ann)
-                            g.api.annotation.upload_anns(
-                                [item_info.id for item_info in item_infos],
-                                [ann for _, ann in ds_item_map[dataset_name]],
+                            upload_ids = [item_info.id for item_info in item_infos]
+                            ds_anns = [ann for _, ann in ds_item_map[dataset_name]]
+                            upload_anns = remove_duplicate_tags(
+                                ds_anns, upload_ids, self.allow_duplicate_tags
                             )
+                            g.api.annotation.upload_anns(upload_ids, upload_anns)
                         elif self.net.modality == "videos":
                             item_infos = g.api.video.upload_paths(
                                 dataset_info.id,

@@ -15,6 +15,7 @@ from supervisely import (
 from supervisely.api.app_api import SessionInfo
 from src.compute.dtl_utils.item_descriptor import ImageDescriptor
 from src.compute.Layer import Layer
+from src.compute.tags_utils import is_duplicate_tags_allowed, remove_duplicate_tags
 from src.exceptions import GraphError
 import src.globals as g
 from supervisely.io.fs import get_file_name
@@ -155,6 +156,7 @@ class CopyAnnotationsLayer(Layer):
         Layer.__init__(self, config, net=net)
         self.sly_project_info = None
         self.ds_map = {}
+        self.allow_duplicate_tags = False
 
     def validate(self):
         if self.net.preview_mode:
@@ -203,6 +205,8 @@ class CopyAnnotationsLayer(Layer):
         self.sly_project_info = g.api.project.get_info_by_id(self.out_project_id)
         if self.sly_project_info is None:
             raise ValueError("Selected project does not exist.")
+
+        self.allow_duplicate_tags = is_duplicate_tags_allowed(self.out_project_id)
 
         dst_meta = ProjectMeta.from_json(g.api.project.get_meta(self.out_project_id))
 
@@ -375,10 +379,15 @@ class CopyAnnotationsLayer(Layer):
                         ann.merge(destination_ann)
                         for ann, destination_ann in zip(image_anns, destination_anns)
                     ]
-
+                    upload_anns = remove_duplicate_tags(
+                        upload_anns, destination_images_ids, self.allow_duplicate_tags
+                    )
                     g.api.annotation.upload_anns(destination_images_ids, upload_anns)
                 else:
-                    g.api.annotation.upload_anns(destination_images_ids, image_anns)
+                    upload_anns = remove_duplicate_tags(
+                        image_anns, destination_images_ids, self.allow_duplicate_tags
+                    )
+                    g.api.annotation.upload_anns(destination_images_ids, upload_anns)
 
             yield tuple(zip(item_descs, anns))
 

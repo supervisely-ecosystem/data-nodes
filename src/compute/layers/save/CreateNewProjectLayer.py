@@ -6,6 +6,7 @@ import supervisely.io.fs as sly_fs
 import supervisely.io.json as sly_json
 from src.compute.dtl_utils.item_descriptor import ImageDescriptor, VideoDescriptor
 from src.compute.Layer import Layer
+from src.compute.tags_utils import is_duplicate_tags_allowed, remove_duplicate_tags
 from src.exceptions import GraphError
 import src.globals as g
 from supervisely.io.fs import get_file_ext
@@ -44,6 +45,7 @@ class CreateNewProjectLayer(Layer):
         Layer.__init__(self, config, net=net)
         self.output_folder = output_folder
         self.sly_project_info = None
+        self.allow_duplicate_tags = False
 
     def validate_dest_connections(self):
         for dst in self.dsts:
@@ -75,6 +77,7 @@ class CreateNewProjectLayer(Layer):
             change_name_if_conflict=True,
         )
         g.api.project.update_meta(self.sly_project_info.id, self.output_meta)
+        self.allow_duplicate_tags = is_duplicate_tags_allowed(self.sly_project_info.id)
 
         custom_data = {
             "source_projects": _get_source_projects_ids_from_dtl(),
@@ -162,10 +165,12 @@ class CreateNewProjectLayer(Layer):
                                     for item_desc, _ in ds_item_map[ds_name]
                                 ],
                             )
-                        g.api.annotation.upload_anns(
-                            [item_info.id for item_info in item_infos],
-                            [ann for _, ann in ds_item_map[ds_name]],
+                        upload_ids = [item_info.id for item_info in item_infos]
+                        ds_anns = [ann for _, ann in ds_item_map[ds_name]]
+                        upload_anns = remove_duplicate_tags(
+                            ds_anns, upload_ids, self.allow_duplicate_tags
                         )
+                        g.api.annotation.upload_anns(upload_ids, upload_anns)
 
                     elif self.net.modality == "videos":
                         item_infos = g.api.video.upload_paths(
