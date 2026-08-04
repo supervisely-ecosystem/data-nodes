@@ -16,6 +16,7 @@ import supervisely.io.fs as sly_fs
 import supervisely.io.json as sly_json
 from src.compute.dtl_utils.item_descriptor import ImageDescriptor, VideoDescriptor
 from src.compute.Layer import Layer
+from src.compute.tags_utils import is_duplicate_tags_allowed, remove_duplicate_tags
 from src.exceptions import GraphError
 import src.globals as g
 from supervisely.io.fs import get_file_ext
@@ -48,6 +49,7 @@ class AddToExistingProjectLayer(Layer):
         Layer.__init__(self, config, net=net)
         self.sly_project_info = None
         self.ds_map = {}
+        self.allow_duplicate_tags = False
 
     def validate(self):
         if self.net.preview_mode:
@@ -94,6 +96,8 @@ class AddToExistingProjectLayer(Layer):
         self.sly_project_info = g.api.project.get_info_by_id(self.out_project_id)
         if self.sly_project_info is None:
             raise GraphError("Selected project does not exist.")
+
+        self.allow_duplicate_tags = is_duplicate_tags_allowed(self.out_project_id)
 
         dst_meta = ProjectMeta.from_json(g.api.project.get_meta(self.out_project_id))
 
@@ -280,7 +284,10 @@ class AddToExistingProjectLayer(Layer):
                             )
 
                         new_item_ids = [image_info.id for image_info in image_info]
-                        g.api.annotation.upload_anns(new_item_ids, anns)
+                        upload_anns = remove_duplicate_tags(
+                            anns, new_item_ids, self.allow_duplicate_tags
+                        )
+                        g.api.annotation.upload_anns(new_item_ids, upload_anns)
                     elif self.net.modality == "videos":
                         video_info = g.api.video.upload_paths(
                             dataset_info.id, out_item_names, item_desc.item_data
@@ -329,7 +336,10 @@ class AddToExistingProjectLayer(Layer):
                                 )
                             anns = [ann for _, ann in ds_item_map[ds_name]]
                             upload_ids = [info.id for info in image_info]
-                            g.api.annotation.upload_anns(upload_ids, anns)
+                            upload_anns = remove_duplicate_tags(
+                                anns, upload_ids, self.allow_duplicate_tags
+                            )
+                            g.api.annotation.upload_anns(upload_ids, upload_anns)
                         elif self.net.modality == "videos":
                             video_datas = [
                                 item_desc.item_data for item_desc, _ in ds_item_map[dataset_name]
