@@ -7,6 +7,7 @@ import supervisely.io.fs as sly_fs
 import supervisely.io.json as sly_json
 from src.compute.dtl_utils.item_descriptor import ImageDescriptor, VideoDescriptor
 from src.compute.Layer import Layer
+from src.compute.project_settings_utils import copy_project_settings
 from src.compute.tags_utils import is_duplicate_tags_allowed, remove_duplicate_tags
 from src.exceptions import BadSettingsError
 from supervisely.io.fs import get_file_ext
@@ -182,8 +183,11 @@ class CreateLabelingJobLayer(Layer):
             )
             g.api.project.update_meta(self.sly_project_info.id, self.output_meta)
 
+            source_projects_ids = _get_source_projects_ids_from_dtl()
+            copy_project_settings(source_projects_ids, self.sly_project_info.id)
+
             custom_data = {
-                "source_projects": _get_source_projects_ids_from_dtl(),
+                "source_projects": source_projects_ids,
                 "data-nodes": g.current_dtl_json,
             }
             g.api.project.update_custom_data(self.sly_project_info.id, custom_data)

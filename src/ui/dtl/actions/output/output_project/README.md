@@ -3,6 +3,8 @@
 
 `Output Project` export results of data transformations to new or existing project in your current workspace. If the metadata of the project to which the saving is performed differs from the metadata of the project that has gone through the whole pipeline, then in this case you will be asked to confirm the merge of this data, the metadata of the project to which the saving is performed will take precedence. This layer is a combination of `Create New Project` and `Add to Existing Project` layers.
 
+When a new project is created, settings of the input project are copied to it. If the pipeline has several input projects, settings of the first one are used. When the results are saved to an existing project, its own settings are used.
+
 ### Settings
 
 - **Export to existing Project** - Check the box if you want to save the results to an existing project. Leave the box unchecked if you want to create new project and save the results to it.

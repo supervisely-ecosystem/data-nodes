@@ -1,6 +1,6 @@
 # Create Labeling Job
 
-`Create Labeling Job` layer allows you to create labeling jobs for your team members. You can specify the reviewer, assign labelers and select classes and tags to label in node options. If there are no connected layers between the source data layer and the `Create Labeling Job` layer that alter source data or annotations then the labeling job will be assigned to the project from which the data is taken, otherwise new project will be created.
+`Create Labeling Job` layer allows you to create labeling jobs for your team members. You can specify the reviewer, assign labelers and select classes and tags to label in node options. If there are no connected layers between the source data layer and the `Create Labeling Job` layer that alter source data or annotations then the labeling job will be assigned to the project from which the data is taken, otherwise new project will be created. Settings of the input project are copied to the created project.
 
 ### Settings
 
