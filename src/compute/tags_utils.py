@@ -102,7 +102,7 @@ def _keep_first_tag_of_each_name(tags: TagCollection) -> Tuple[TagCollection, Li
 
 
 def _log_removed_tag(tag: Tag, image_id: int, object_name: Optional[str]) -> None:
-    """Warn that a duplicate tag is not uploaded.
+    """Report that a duplicate tag is not uploaded.
 
     :param tag: Removed tag.
     :param image_id: Destination image ID.
@@ -112,7 +112,7 @@ def _log_removed_tag(tag: Tag, image_id: int, object_name: Optional[str]) -> Non
         target = f"Image (ID: '{image_id}')"
     else:
         target = f"Object '{object_name}' on image (ID: '{image_id}')"
-    sly.logger.warn(
+    sly.logger.debug(
         f"{target} already has tag '{tag.name}'. "
         f"Duplicate with value '{tag.value}' is skipped: "
         "'Multiple tags mode' is disabled in the destination project settings"
