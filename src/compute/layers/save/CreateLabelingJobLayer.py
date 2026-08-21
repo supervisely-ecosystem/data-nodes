@@ -189,10 +189,15 @@ class CreateLabelingJobLayer(Layer):
                     extra={"layer": self.action},
                 )
             project_id = source_projects_ids[0]
-            src_project_info = g.api.project.get_info_by_id(project_id)
+            src_project_info = g.api.project.get_info_by_id(project_id, self.net.modality)
+            if src_project_info is None:
+                raise BadSettingsError(
+                    f"Source project (id={project_id}) for this Labeling Job no longer exists",
+                    extra={"layer": self.action},
+                )
             dst = src_project_info.name
             self.out_project_name = dst
-            self.sly_project_info = g.api.project.get_info_by_id(project_id, self.net.modality)
+            self.sly_project_info = src_project_info
             # need custom data update?
 
         if self.sly_project_info is not None:
