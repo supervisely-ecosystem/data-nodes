@@ -24,7 +24,7 @@ from supervisely.io.fs import get_file_name
 def _get_source_projects_ids_from_dtl():
     source_project_id_ds_map = {}
     for action in g.current_dtl_json:
-        if action["action"] == "images_project":
+        if action["action"] in ("images_project", "videos_project", "input_labeling_job"):
             if len(action["src"]) == 0:
                 continue
             project_name = action["src"][0].split("/")[0]

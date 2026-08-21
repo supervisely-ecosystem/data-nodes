@@ -6,24 +6,13 @@ from supervisely import Annotation, VideoAnnotation, KeyIdMap, ProjectMeta, Data
 import supervisely.io.fs as sly_fs
 import supervisely.io.json as sly_json
 from src.compute.dtl_utils.item_descriptor import ImageDescriptor, VideoDescriptor
+from src.compute.dtl_utils.source_project import get_source_project_ids_from_dtl
 from src.compute.Layer import Layer
 from src.compute.project_settings_utils import copy_project_settings
 from src.compute.tags_utils import is_duplicate_tags_allowed, remove_duplicate_tags
 from src.exceptions import BadSettingsError
 from supervisely.io.fs import get_file_ext
 import src.globals as g
-
-
-def _get_source_projects_ids_from_dtl():
-    source_projects_ids = []
-    for action in g.current_dtl_json:
-        if action["action"] == "images_project" or action["action"] == "videos_project":
-            if len(action["src"]) == 0:
-                continue
-            project_name = action["src"][0].split("/")[0]
-            project_id = g.api.project.get_info_by_name(g.WORKSPACE_ID, project_name).id
-            source_projects_ids.append(project_id)
-    return source_projects_ids
 
 
 def _filter_meta(dataset_id: int, classes_to_label: List[str], tags_to_label: List[str]):
@@ -183,7 +172,7 @@ class CreateLabelingJobLayer(Layer):
             )
             g.api.project.update_meta(self.sly_project_info.id, self.output_meta)
 
-            source_projects_ids = _get_source_projects_ids_from_dtl()
+            source_projects_ids = get_source_project_ids_from_dtl()
             copy_project_settings(source_projects_ids, self.sly_project_info.id)
 
             custom_data = {
@@ -192,11 +181,23 @@ class CreateLabelingJobLayer(Layer):
             }
             g.api.project.update_custom_data(self.sly_project_info.id, custom_data)
         else:  # use input project
-            project_id = _get_source_projects_ids_from_dtl()[0]
-            src_project_info = g.api.project.get_info_by_id(project_id)
+            source_projects_ids = get_source_project_ids_from_dtl()
+            if len(source_projects_ids) == 0:
+                raise BadSettingsError(
+                    "Could not determine the source project for this Labeling Job - "
+                    "the pipeline has no recognized project input layer",
+                    extra={"layer": self.action},
+                )
+            project_id = source_projects_ids[0]
+            src_project_info = g.api.project.get_info_by_id(project_id, self.net.modality)
+            if src_project_info is None:
+                raise BadSettingsError(
+                    f"Source project (id={project_id}) for this Labeling Job no longer exists",
+                    extra={"layer": self.action},
+                )
             dst = src_project_info.name
             self.out_project_name = dst
-            self.sly_project_info = g.api.project.get_info_by_id(project_id, self.net.modality)
+            self.sly_project_info = src_project_info
             # need custom data update?
 
         if self.sly_project_info is not None:
