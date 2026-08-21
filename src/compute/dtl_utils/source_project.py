@@ -2,20 +2,25 @@
 
 from typing import List, Optional
 
+from src.utils import get_project_by_name
 import src.globals as g
+
+# Action types whose "src" holds ["project_name/dataset_name", ...], same as images_project.
+_NAMED_SOURCE_ACTIONS = ("images_project", "videos_project", "input_labeling_job")
 
 
 def get_action_project_id(action: dict) -> Optional[int]:
     """Return the project id a single DTL input-layer action reads from, or None if this
     action type isn't a recognized project source."""
     action_type = action["action"]
-    if action_type in ("images_project", "videos_project"):
-        if len(action["src"]) == 0:
+    if action_type in _NAMED_SOURCE_ACTIONS:
+        src = action.get("src") or []
+        if len(src) == 0:
             return None
-        project_name = action["src"][0].split("/")[0]
-        return g.api.project.get_info_by_name(g.WORKSPACE_ID, project_name).id
+        project_name = src[0].split("/")[0]
+        return get_project_by_name(project_name).id
     if action_type == "filtered_project":
-        return action["settings"]["project_id"]
+        return action.get("settings", {}).get("project_id")
     return None
 
 
