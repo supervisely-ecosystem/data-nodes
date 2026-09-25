@@ -18,7 +18,7 @@ from supervisely.sly_logger import logger
 from supervisely.annotation.json_geometries_map import GET_GEOMETRY_FROM_STR
 from supervisely.imaging.color import hex2rgb
 
-from src.compute.classes_utils import ClassConstants
+from src.compute.classes_utils import ClassConstants, get_merge_nodes_mapping
 from src.compute.tags_utils import TagConstants
 from src.exceptions import CustomException, GraphError, CreateMetaError
 
@@ -324,6 +324,11 @@ class Layer:
                             extra={"class_name": src_class_title, "dst_class": dst_class},
                         )
                     else:
+                        dst_obj_cls = full_input_meta.get_obj_class(
+                            dst_class[len(ClassConstants.MERGE) :]
+                        )
+                        if dst_obj_cls is not None and dst_obj_cls.name != obj_cls.name:
+                            get_merge_nodes_mapping(obj_cls, dst_obj_cls)
                         res_meta = res_meta.delete_obj_class(src_class_title)
 
                 # smth -> new name
