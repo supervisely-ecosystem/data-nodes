@@ -25,6 +25,9 @@ from src.compute.layers.processing.SplitVideoByDurationLayer import (
 from src.exceptions import GraphError
 
 
+AUTO_MAX_WORKERS = 8
+
+
 def clip_annotation(ann: VideoAnnotation, start: int, end: int, frames_count: int) -> VideoAnnotation:
     """Annotation of frames start..end, re-indexed so that `start` becomes frame 0."""
     frames = []
@@ -93,7 +96,9 @@ class CustomCodeLayer(Layer):
     def workers(self) -> int:
         workers = self.settings.get("workers", 0)
         if workers <= 0:
-            workers = os.cpu_count() or 1
+            # Each worker holds its own interpreter, SDK and script (about 350 MB before the
+            # script's own imports), and video decoding already uses several cores per video.
+            workers = min(os.cpu_count() or 1, AUTO_MAX_WORKERS)
         return workers
 
     def video_batch_size(self) -> int:
@@ -180,14 +185,13 @@ class CustomCodeLayer(Layer):
         meta_json = self.output_meta.to_json()
         params = self.settings.get("params", {})
         ffmpeg_threads = max(1, (os.cpu_count() or 1) // self.workers())
-        futures = []
-        for (vid_desc, ann), video_path in zip(data_els, video_paths):
-            if isinstance(video_path, Exception) or not g.pipeline_running:
-                futures.append(video_path if isinstance(video_path, Exception) else None)
-                continue
-            futures.append(
-                self._pool.submit(
-                    runner.run_video,
+        jobs = {}
+        results = {}
+        for idx, ((vid_desc, ann), video_path) in enumerate(zip(data_els, video_paths)):
+            if isinstance(video_path, Exception):
+                results[idx] = video_path
+            elif g.pipeline_running:
+                jobs[idx] = (
                     self._script_local_path,
                     video_path,
                     vid_desc.info.item_info._asdict(),
@@ -197,26 +201,16 @@ class CustomCodeLayer(Layer):
                     self._clips_dir,
                     ffmpeg_threads,
                 )
-            )
+        results.update(self._run_jobs(jobs))
 
         outputs = []
-        for (vid_desc, ann), future in zip(data_els, futures):
-            if future is None:
+        for idx, (vid_desc, ann) in enumerate(data_els):
+            if idx not in results:
                 continue
             self._stats["videos"] += 1
-            if isinstance(future, Exception):
-                self._report_error(vid_desc, future)
-                continue
-            try:
-                result = future.result()
-            except BrokenProcessPool as e:
-                # A worker died (the script crashed the interpreter): the pool is unusable.
-                self._report_error(vid_desc, e)
-                self._shutdown_pool()
-                self._create_pool()
-                continue
-            except Exception as e:
-                self._report_error(vid_desc, e)
+            result = results[idx]
+            if isinstance(result, Exception):
+                self._report_error(vid_desc, result)
                 continue
 
             if len(result["ranges"]) == 0:
@@ -231,6 +225,39 @@ class CustomCodeLayer(Layer):
                     self._report_error(vid_desc, e)
         if len(outputs) > 0:
             yield outputs
+
+    def _run_jobs(self, jobs: dict) -> dict:
+        """Run runner.run_video for every job: {index: result or the exception it raised}."""
+        futures = {idx: self._pool.submit(runner.run_video, *args) for idx, args in jobs.items()}
+        results, crashed = {}, []
+        for idx, future in futures.items():
+            try:
+                results[idx] = future.result()
+            except BrokenProcessPool:
+                crashed.append(idx)
+            except Exception as e:
+                results[idx] = e
+        if len(crashed) > 0:
+            # A worker process died (the script crashed the interpreter), and every video still
+            # in the pool failed with it. Re-run those one at a time to find the one responsible.
+            logger.warning(
+                f"Custom Code: a worker process died. Re-running {len(crashed)} videos one at a time"
+            )
+            self._shutdown_pool()
+            self._create_pool()
+            for idx in crashed:
+                try:
+                    results[idx] = self._pool.submit(runner.run_video, *jobs[idx]).result()
+                except BrokenProcessPool:
+                    results[idx] = RuntimeError(
+                        "the script ended its worker process "
+                        "(a crash in native code, os._exit() or running out of memory)"
+                    )
+                    self._shutdown_pool()
+                    self._create_pool()
+                except Exception as e:
+                    results[idx] = e
+        return results
 
     def _make_clips(self, vid_desc: VideoDescriptor, ann: VideoAnnotation, clips: list):
         video_info: VideoInfo = vid_desc.info.item_info

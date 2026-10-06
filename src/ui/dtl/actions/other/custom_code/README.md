@@ -8,7 +8,7 @@ The node is off unless the app's image sets the environment variable `ML_PIPELIN
 
 - **Script** - a `.py` file in Team Files. Pick one from `/ml-pipelines/custom-code/`, pick any `.py` file in Team Files, or start from the template. Edit it in the node, then **Save** writes it back to Team Files and **Save as** creates a new file. Unsaved changes are saved when the pipeline starts. The node keeps the path of the script, not its text.
 - **Parameters** - JSON passed to the script as `params`.
-- **Workers** - how many videos run at the same time, each in its own process. `0` uses all CPU cores of the agent.
+- **Workers** - how many videos run at the same time, each in its own process. `0` starts one per CPU core of the agent, up to 8. Each worker needs about 350 MB of memory plus what your script loads.
 
 The script defines:
 
@@ -18,6 +18,8 @@ def process(video_path: str, video_info, ann, params: dict) -> list[tuple[int, i
 ```
 
 It returns inclusive `(start, end)` frame ranges. `[]` drops the video, and `[(0, video_info.frames_count - 1)]` passes it through unchanged. Clips are cut at exact frames and re-encoded to H.264 MP4. A video whose script fails is skipped with an error in the log, and the run continues.
+
+Examples for every step and how to build an image with your own packages: [ML Pipelines: Custom Code node](https://developer.supervisely.com/advanced-user-guide/ml-pipelines-custom-code) in the developer portal.
 
 ### JSON views
 

@@ -166,7 +166,7 @@ class CustomCodeAction(VideoAction):
         workers_field = Field(
             workers_input,
             "Workers",
-            "Videos processed at the same time, one process each. 0 uses all CPU cores",
+            "Videos processed at the same time, one process each. 0: one per CPU core, up to 8",
         )
         settings_message = Text("", status="error", font_size=get_text_font_size())
         settings_message.hide()
