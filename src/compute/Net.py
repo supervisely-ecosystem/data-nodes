@@ -140,6 +140,10 @@ class Net:
         for layer in self.layers:
             layer.postprocess()
 
+    def video_batch_size(self) -> int:
+        """Videos per batch when data is modified: 1, unless a node asks for more."""
+        return max([1] + [layer.video_batch_size() for layer in self.layers])
+
     def may_require_items(self):
         for l in self.layers:
             if l.requires_item():
@@ -472,9 +476,9 @@ class Net:
                                 False,
                             )
 
-                            video_path = os.path.join(g.DATA_DIR, vid_info.name)
-                            g.api.video.download_path(vid_info.id, video_path)
-                            vid_desc.update_item(video_path)
+                            # Downloaded only when a node first reads the file.
+                            video_path = os.path.join(g.DATA_DIR, str(vid_info.id), vid_info.name)
+                            vid_desc.set_lazy_source(vid_info.id, video_path)
                             ann_json = g.api.video.annotation.download(vid_info.id)
                             ann = VideoAnnotation.from_json(
                                 ann_json,
@@ -600,9 +604,9 @@ class Net:
                                 False,
                             )
 
-                            video_path = os.path.join(g.DATA_DIR, vid_info.name)
-                            g.api.video.download_path(vid_info.id, video_path)
-                            vid_desc.update_item(video_path)
+                            # Downloaded only when a node first reads the file.
+                            video_path = os.path.join(g.DATA_DIR, str(vid_info.id), vid_info.name)
+                            vid_desc.set_lazy_source(vid_info.id, video_path)
                             ann_json = g.api.video.annotation.download(vid_info.id)
                             ann = VideoAnnotation.from_json(
                                 ann_json,

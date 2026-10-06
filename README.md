@@ -143,6 +143,10 @@ This application is a versatile tool designed for data transformation tasks (lik
 
   ![merge-projects](https://github.com/supervisely-ecosystem/data-nodes/assets/48913536/1baaedff-3d02-46bb-a307-d690036509d2)
 
+## Custom Nodes
+
+To add nodes with your own code or Python packages, fork this repository, put your nodes in `src/custom_nodes/` and release the fork as a private app. Nodes in that folder are registered automatically and shown in the **Custom** group, so the fork can take updates from this repository without conflicts. See the [tutorial](https://developer.supervisely.com/app-development/ml-pipelines/custom-nodes).
+
 ## How To Run
 
 There are several ways to run the application, depending on your needs and preferences:

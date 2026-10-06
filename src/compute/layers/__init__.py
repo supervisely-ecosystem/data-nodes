@@ -4,6 +4,7 @@ import pkgutil
 import numpy as np
 
 from src.compute.Layer import Layer
+from src.custom_nodes_loader import get_classes, on_custom_nodes_loaded
 
 if not hasattr(np, "sctypes"):
     np.sctypes = {
@@ -35,3 +36,12 @@ def register_layers(package, type):
 register_layers(data, "data")
 register_layers(processing, "processing")
 register_layers(save, "save")
+
+
+def register_custom_layers(modules):
+    # Nodes from src/custom_nodes are always processing layers.
+    for layer_cls in get_classes(modules, Layer, "action"):
+        Layer.register_layer(layer_cls, "processing")
+
+
+on_custom_nodes_loaded(register_custom_layers)
