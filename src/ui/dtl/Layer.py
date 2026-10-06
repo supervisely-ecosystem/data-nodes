@@ -62,6 +62,7 @@ class Layer:
         postprocess_cb: Optional[callable] = None,
         update_sources_cb: Optional[callable] = None,
         init_widgets: Optional[callable] = None,
+        before_run: Optional[callable] = None,
     ):
         self.action = action
         self.id = id
@@ -85,6 +86,7 @@ class Layer:
         self.postprocess_cb = postprocess_cb
         self.update_sources_cb = update_sources_cb
         self._init_widgets = init_widgets
+        self._before_run = before_run
 
         def __change_create_options(self):
             self._create_options = create_options
@@ -214,6 +216,11 @@ class Layer:
             self._init_widgets(self)
             return True
         return False
+
+    def before_run(self):
+        """Called when the pipeline starts, before the node's settings are read."""
+        if self._before_run is not None:
+            self._before_run()
 
     # NodesFlow.Node
     def create_node(self) -> NodesFlow.Node:

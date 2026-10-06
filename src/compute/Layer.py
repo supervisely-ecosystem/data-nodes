@@ -154,6 +154,10 @@ class Layer:
         """Defines if data or it's annotation is modified by the Layer"""
         return False
 
+    def video_batch_size(self) -> int:
+        """How many videos this Layer wants per batch when data is modified (default 1)."""
+        return 1
+
     def validate_source_connections(self):
         for src in self.srcs:
             if src == Layer.null:

@@ -97,6 +97,11 @@ def _run():
     progress.show()
 
     try:
+        for node_id in nodes_state:
+            node = g.layers.get(node_id)
+            if node is not None:
+                node.before_run()
+
         # init layers
         ui_utils.init_layers(nodes_state)
 

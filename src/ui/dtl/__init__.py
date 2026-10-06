@@ -130,6 +130,7 @@ from .actions.neural_networks.deploy.deploy import (
     DeployDEIMAction,
 )
 from .actions.other.copy.copy import CopyAction
+from .actions.other.custom_code.custom_code import CustomCodeAction
 from .actions.other.dataset.dataset import DatasetAction
 from .actions.other.dummy.dummy import DummyAction
 from .actions.other.move.move import MoveAction
@@ -439,6 +440,11 @@ video_actions_legacy_dict = {
     CreateLabelingJobAction.legacy_name: CreateLabelingJobAction.name,
 }
 
+
+# Runs scripts from Team Files inside the app: listed only when the app's image enables it.
+if g.CUSTOM_CODE_ENABLED:
+    video_actions_list[VIDEO_TRANSFORMS].append(CustomCodeAction.name)
+    video_actions_dict[CustomCodeAction.name] = CustomCodeAction
 
 modality_dict = {"images": image_actions_dict, "videos": video_actions_dict}
 modality_list = {"images": image_actions_list, "videos": video_actions_list}

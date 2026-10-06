@@ -68,6 +68,11 @@ if PROJECT_ID is not None:
 
 PRESETS_PATH = os.path.join("/" + TEAM_FILES_PATH + "/presets", MODALITY_TYPE)
 
+# The Custom Code node runs scripts from Team Files inside this app, so it is off unless the
+# app's image sets this variable (for example ENV ML_PIPELINES_CUSTOM_CODE=1 in a fork's Dockerfile).
+CUSTOM_CODE_ENABLED = os.getenv("ML_PIPELINES_CUSTOM_CODE", "").strip().lower() in ("1", "true", "yes", "on")
+CUSTOM_CODE_DIR = "/ml-pipelines/custom-code/"
+
 PIPELINE_TEMPLATE = os.getenv("modal.state.pipelineTemplate", None)
 FILTERED_ENTITIES = []
 ENTITIES_FILTERS = []

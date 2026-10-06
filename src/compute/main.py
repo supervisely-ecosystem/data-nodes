@@ -140,7 +140,7 @@ def main(
         if g.MODALITY_TYPE == "images":
             g.BATCH_SIZE = 50
         else:
-            g.BATCH_SIZE = 1
+            g.BATCH_SIZE = net.video_batch_size()
 
     elements_generator_batched = net.get_elements_generator_batched(batch_size=g.BATCH_SIZE)
     if not g.pipeline_running:
