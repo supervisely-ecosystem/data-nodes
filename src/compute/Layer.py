@@ -154,6 +154,11 @@ class Layer:
         """Defines if data or it's annotation is modified by the Layer"""
         return False
 
+    def video_batch_size(self) -> int:
+        """How many videos this Layer wants in one process_batch call when data is modified.
+        The pipeline uses the largest value among its layers (default 1)."""
+        return 1
+
     def validate_source_connections(self):
         for src in self.srcs:
             if src == Layer.null:

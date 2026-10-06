@@ -1,7 +1,9 @@
 import src.globals as g
+from src.custom_nodes_loader import get_classes, on_custom_nodes_loaded
 
 from .Action import (
     Action,
+    VideoAction,
     AnnotationAction,
     FilterAndConditionAction,
     ImgAugAugmentationsAction,
@@ -184,6 +186,8 @@ NEURAL_NETWORKS = "Neural networks"
 IMGAUG_AUGMENTATIONS = "ImgAug Augmentations"
 # Video specific
 VIDEO_TRANSFORMS = "Video transforms"
+# Nodes from src/custom_nodes
+CUSTOM_NODES = "Custom"
 # ---
 
 image_actions_list = {
@@ -449,3 +453,37 @@ actions_list = modality_list[g.MODALITY_TYPE]
 actions_dict_legacy = modality_dict_legacy[g.MODALITY_TYPE]
 
 hidden_actions_dict = {FilteredProjectAction.name: FilteredProjectAction}
+
+
+def get_action_modalities(action_cls) -> list:
+    """A custom node sets `modalities = ["images"]`, `["videos"]` or both.
+    Without it, a VideoAction subclass is a video node and anything else is an image node."""
+    modalities = getattr(action_cls, "modalities", None)
+    if modalities is None:
+        modalities = ["videos"] if issubclass(action_cls, VideoAction) else ["images"]
+    return list(modalities)
+
+
+def register_custom_actions(modules):
+    for action_cls in get_classes(modules, Action, "name"):
+        modalities = get_action_modalities(action_cls)
+        unknown = set(modalities) - set(modality_dict)
+        if unknown:
+            raise RuntimeError(
+                f"Custom node '{action_cls.name}' has unsupported modalities: {sorted(unknown)}"
+            )
+        for modality in modalities:
+            if action_cls.name in modality_dict[modality]:
+                raise RuntimeError(f"Duplicate node name '{action_cls.name}' in src/custom_nodes")
+            modality_dict[modality][action_cls.name] = action_cls
+            # keep the "Custom" group right before the "Output" group
+            group_list = modality_list[modality]
+            if CUSTOM_NODES not in group_list:
+                save_actions = group_list.pop(SAVE_ACTIONS)
+                group_list[CUSTOM_NODES] = []
+                group_list[SAVE_ACTIONS] = save_actions
+            group_list[CUSTOM_NODES].append(action_cls.name)
+
+
+on_custom_nodes_loaded(register_custom_actions)
+

@@ -1,5 +1,8 @@
 # coding: utf-8
 
+import os
+import threading
+
 from src.utils import LegacyProjectItem
 import cv2
 import numpy as np
@@ -118,9 +121,65 @@ class ImageDescriptor(ItemDescriptor):
 
 
 class VideoDescriptor(ItemDescriptor):
+    """For videos, item_data is the local path of the video file.
+
+    A descriptor made with set_lazy_source() downloads the video the first time item_data is
+    read, so videos that no node reads (filtered out, for example) are never downloaded.
+    """
 
     def __init__(self, info: LegacyProjectItem, item_idx: int, modify_ds_name: bool = True):
+        self._lazy_source = None
+        self._download_lock = threading.Lock()
         super().__init__(info, item_idx, modify_ds_name)
+
+    @property
+    def item_data(self):
+        if self._item_data is None and self._lazy_source is not None:
+            with self._download_lock:
+                if self._item_data is None and self._lazy_source is not None:
+                    video_id, video_path = self._lazy_source
+                    if not os.path.exists(video_path):
+                        import src.globals as g
+
+                        # Write to a private file and rename, so that another descriptor of the
+                        # same video never reads a partially downloaded file.
+                        os.makedirs(os.path.dirname(video_path), exist_ok=True)
+                        part_path = f"{video_path}.part-{os.getpid()}-{id(self)}"
+                        g.api.video.download_path(video_id, part_path)
+                        os.replace(part_path, video_path)
+                    self._item_data = video_path
+                    self._lazy_source = None
+        return self._item_data
+
+    @item_data.setter
+    def item_data(self, value):
+        self._item_data = value
+        self._lazy_source = None
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state["_download_lock"]
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._download_lock = threading.Lock()
+
+    def set_lazy_source(self, video_id: int, video_path: str) -> None:
+        """Download the video `video_id` to `video_path` when item_data is first read."""
+        self._item_data = None
+        self._lazy_source = (video_id, video_path)
+
+    def need_write(self) -> bool:
+        return self._item_data is not None or self._lazy_source is not None
+
+    def clone_with_name(self, new_name):
+        new_info = self.info._replace(item_name=new_name)
+        new_obj = self.__class__(new_info, self.item_idx)
+        new_obj._item_data = self._item_data
+        new_obj._lazy_source = self._lazy_source
+        new_obj.res_ds_name = self.res_ds_name
+        return new_obj
 
     def read_video(self) -> cv2.VideoCapture:
         if self.item_data is not None:
